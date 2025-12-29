@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'HAYTHI - Expertise IT & Conseil Digital',
   description: 'Consultant IT Freelance spécialisé en développement web, architecture SI et management de projets. 15+ ans d\'expérience.',
   keywords: 'consultant IT, développement web, Symfony, PHP, architecture SI, management de projets, Madagascar',
-  authors: [{ name: 'Thierry Randriantiana' }],
+  authors: [{ name: 'HAYTHI' }],
   openGraph: {
     title: 'HAYTHI - Expertise IT & Conseil Digital',
     description: 'Consultant IT Freelance | 15+ ans d\'expérience',

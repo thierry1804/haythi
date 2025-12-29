@@ -87,7 +87,7 @@ Design : Cartes avec hover effect élégant, bordures subtiles, espacement gén�
 Crée deux sections importantes :
 
 SECTION À PROPOS :
-- Titre : "Thierry Randriantiana | Manager IT & Développeur Sénior"
+- Titre : "HAYTHI | Manager IT & Développeur Sénior"
 - Photo professionnelle (placeholder avec initiales TBM)
 - Texte : "Depuis 2009, je développe des applications web principalement en PHP avec le framework Symfony. Fort de 15 ans d'expérience, j'ai utilisé une large gamme de technologies et acquis une solide expérience en gestion d'équipe et en gestion de projet. Mon enthousiasme pour l'acquisition de nouvelles connaissances, ma ténacité et ma persévérance me permettent de m'adapter à toutes les situations."
 - Statistiques clés en 3 blocs : "15+ Ans d'expérience" | "50+ Projets réalisés" | "4 Certifications"
@@ -313,7 +313,7 @@ ARTICLE TYPE (placeholder content) :
 - Titre H1
 - Temps de lecture
 - Contenu avec sections (H2, H3, code blocks, images)
-- Auteur : Thierry Randriantiana
+- Auteur : HAYTHI
 - Boutons de partage social
 - Articles similaires en bas
 

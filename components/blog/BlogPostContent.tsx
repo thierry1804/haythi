@@ -80,7 +80,7 @@ Voici la conclusion de l'article.
               <span>{post.readTime} {t.blog.readTime}</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span>Par Thierry Randriantiana</span>
+              <span>Par HAYTHI</span>
             </div>
           </div>
 

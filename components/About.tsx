@@ -43,7 +43,7 @@ export const About = () => {
             
             {/* Photo placeholder */}
             <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-gray-light flex items-center justify-center">
-              <span className="text-4xl font-bold text-gray-medium">TR</span>
+              <span className="text-4xl font-bold text-gray-medium">T2S</span>
             </div>
 
             <p className="text-lg text-gray-medium leading-relaxed mb-12">

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Mail, Phone, Linkedin } from 'lucide-react';
+import { Mail, Phone, MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/lib/context/LanguageContext';
 
 export const Footer = () => {
@@ -13,7 +13,6 @@ export const Footer = () => {
     { href: '#services', label: t.nav.services },
     { href: '#about', label: t.nav.about },
     { href: '#skills', label: t.nav.skills },
-    { href: '#experience', label: t.nav.experience },
     { href: '#certifications', label: t.nav.certifications },
     { href: '#blog', label: t.nav.blog },
     { href: '#contact', label: t.nav.contact },
@@ -63,14 +62,14 @@ export const Footer = () => {
                 </a>
               </li>
               <li className="flex items-center space-x-3">
-                <Linkedin className="w-5 h-5 text-gray-light" />
+                <MessageCircle className="w-5 h-5 text-gray-light" />
                 <a
-                  href={t.contact.linkedin}
+                  href={t.contact.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-light hover:text-white transition-colors duration-300"
                 >
-                  LinkedIn
+                  WhatsApp
                 </a>
               </li>
             </ul>
@@ -81,13 +80,13 @@ export const Footer = () => {
             <h3 className="text-xl font-bold mb-6">{t.footer.followUs}</h3>
             <div className="space-y-4">
               <a
-                href={t.contact.linkedin}
+                href={t.contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 text-gray-light hover:text-white transition-colors duration-300"
               >
-                <Linkedin className="w-5 h-5" />
-                <span>LinkedIn</span>
+                <MessageCircle className="w-5 h-5" />
+                <span>WhatsApp</span>
               </a>
             </div>
             <div className="mt-8 pt-8 border-t border-gray-medium">

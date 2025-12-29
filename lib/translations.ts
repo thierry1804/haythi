@@ -87,8 +87,7 @@ export interface Translations {
     address: string;
     email: string;
     phone: string;
-    linkedin: string;
-    skype: string;
+    whatsapp: string;
     form: {
       name: string;
       company: string;
@@ -128,14 +127,14 @@ export const translations: Record<Language, Translations> = {
       contact: 'Contact',
     },
     hero: {
-      title: 'HAYTHI - Expertise IT & Conseil Digital',
+      title: 'HAYTHI - Expertise IT & consulting digital',
       subtitle: 'Tech to serve',
       description: 'Consultant IT Freelance | 15+ ans d\'expérience',
       cta1: 'Découvrir mes services',
       cta2: 'Prendre RDV',
     },
     services: {
-      title: 'Services d\'Excellence IT',
+      title: 'Services d\'excellence IT',
       webDev: {
         title: 'Développement Web',
         description: 'Applications web sur mesure avec Symfony, PHP, CodeIgniter. 15 ans d\'expertise en développement backend et frontend.',
@@ -147,12 +146,12 @@ export const translations: Record<Language, Translations> = {
         technologies: 'Microservices, API REST, ETL Talend',
       },
       management: {
-        title: 'Management de Projets IT',
+        title: 'Management de projets IT',
         description: 'Gestion de projets IT de A à Z, coordination d\'équipes, méthodologies agiles (Scrum Master certifié PMP).',
         certifications: 'PMP, Scrum Master',
       },
       consulting: {
-        title: 'Conseil & Audit',
+        title: 'Conseil & audit',
         description: 'Audit qualité ISO 9001, optimisation des SI, conseil stratégique et opérationnel.',
         expertise: 'ISO 9001, Audit technique',
       },
@@ -163,8 +162,8 @@ export const translations: Record<Language, Translations> = {
       },
     },
     about: {
-      title: 'Thierry Randriantiana | Manager IT & Développeur Sénior',
-      text: 'Depuis 2009, je développe des applications web principalement en PHP avec le framework Symfony. Fort de 15 ans d\'expérience, j\'ai utilisé une large gamme de technologies et acquis une solide expérience en gestion d\'équipe et en gestion de projet. Mon enthousiasme pour l\'acquisition de nouvelles connaissances, ma ténacité et ma persévérance me permettent de m\'adapter à toutes les situations.',
+      title: 'Tech To Serve',
+      text: 'Depuis 2009, HAYTHI développe des applications web principalement en PHP avec le framework Symfony. Forte de 15 ans d\'expérience, l\'entreprise a utilisé une large gamme de technologies et acquis une solide expérience en gestion d\'équipe et en gestion de projet. Notre passion pour l\'acquisition de nouvelles connaissances, notre ténacité et notre persévérance nous permettent de nous adapter à toutes les situations.',
       stats: {
         experience: '15+ Ans d\'expérience',
         projects: '50+ Projets réalisés',
@@ -172,9 +171,9 @@ export const translations: Record<Language, Translations> = {
       },
     },
     skills: {
-      title: 'Expertise Technique',
+      title: 'Expertise technique',
       categories: {
-        languages: 'Langages & Frameworks',
+        languages: 'Languages & frameworks',
         databases: 'Bases de données',
         frontend: 'Frontend',
         devops: 'DevOps & Outils',
@@ -183,28 +182,27 @@ export const translations: Record<Language, Translations> = {
       },
     },
     experience: {
-      title: 'Parcours Professionnel',
+      title: 'Parcours professionnel',
     },
     certifications: {
-      title: 'Certifications & Formations',
+      title: 'Certifications & formations',
     },
     portfolio: {
-      title: 'Réalisations & Projets',
+      title: 'Réalisations & projets',
       viewProject: 'Voir le projet',
     },
     blog: {
-      title: 'Blog & Insights Techniques',
+      title: 'Blog & insights techniques',
       readMore: 'Lire la suite',
       viewAll: 'Voir tous les articles',
       readTime: 'min de lecture',
     },
     contact: {
-      title: 'Discutons de Votre Projet',
+      title: 'Discutons de votre projet',
       address: 'Antananarivo, Madagascar',
-      email: 'thierry1804@gmail.com',
-      phone: '+261 34 20 018 04',
-      linkedin: 'https://www.linkedin.com/in/thierry-randriantiana',
-      skype: 'thierrypro75',
+      email: 'contact@haythi.mg',
+      phone: '+261 32 28 383 86',
+      whatsapp: 'https://wa.me/261322838386',
       form: {
         name: 'Nom complet',
         company: 'Nom de votre entreprise',
@@ -217,7 +215,7 @@ export const translations: Record<Language, Translations> = {
         subjects: {
           webDev: 'Développement Web',
           architecture: 'Architecture SI',
-          projectManagement: 'Management Projet',
+          projectManagement: 'Management project',
           consulting: 'Conseil',
           training: 'Formation',
           other: 'Autre',
@@ -242,31 +240,31 @@ export const translations: Record<Language, Translations> = {
       contact: 'Contact',
     },
     hero: {
-      title: 'HAYTHI - IT Expertise & Digital Consulting',
+      title: 'HAYTHI - IT expertise & digital consulting',
       subtitle: 'Tech to serve',
       description: 'Freelance IT Consultant | 15+ years of experience',
       cta1: 'Discover my services',
       cta2: 'Book an appointment',
     },
     services: {
-      title: 'IT Excellence Services',
+      title: 'IT excellence services',
       webDev: {
         title: 'Web Development',
         description: 'Custom web applications with Symfony, PHP, CodeIgniter. 15 years of expertise in backend and frontend development.',
         technologies: 'Symfony, PHP, MySQL, JavaScript, jQuery',
       },
       architecture: {
-        title: 'IT Architecture',
+        title: 'IT architecture',
         description: 'Design and development of robust, scalable and secure application architectures.',
         technologies: 'Microservices, REST API, ETL Talend',
       },
       management: {
-        title: 'IT Project Management',
+        title: 'IT project management',
         description: 'End-to-end IT project management, team coordination, agile methodologies (PMP certified Scrum Master).',
         certifications: 'PMP, Scrum Master',
       },
       consulting: {
-        title: 'Consulting & Audit',
+        title: 'Consulting & audit',
         description: 'ISO 9001 quality audit, IT optimization, strategic and operational consulting.',
         expertise: 'ISO 9001, Technical Audit',
       },
@@ -277,48 +275,47 @@ export const translations: Record<Language, Translations> = {
       },
     },
     about: {
-      title: 'Thierry Randriantiana | IT Manager & Senior Developer',
-      text: 'Since 2009, I have been developing web applications mainly in PHP with the Symfony framework. With 15 years of experience, I have used a wide range of technologies and acquired solid experience in team management and project management. My enthusiasm for acquiring new knowledge, my tenacity and perseverance allow me to adapt to all situations.',
+      title: 'Tech To Serve',
+      text: 'Since 2009, HAYTHI has been developing web applications mainly in PHP with the Symfony framework. With 15 years of experience, we have used a wide range of technologies and acquired solid experience in team management and project management. Our passion for acquiring new knowledge, our tenacity and perseverance allow us to adapt to all situations.',
       stats: {
-        experience: '15+ Years of experience',
-        projects: '50+ Projects completed',
-        certifications: '4 Certifications',
+        experience: '15+ years of experience',
+        projects: '50+ projects completed',
+        certifications: '4 certifications',
       },
     },
     skills: {
       title: 'Technical Expertise',
       categories: {
-        languages: 'Languages & Frameworks',
+        languages: 'Languages & frameworks',
         databases: 'Databases',
         frontend: 'Frontend',
-        devops: 'DevOps & Tools',
+        devops: 'DevOps & tools',
         mobile: 'Mobile',
         methodologies: 'Methodologies',
       },
     },
     experience: {
-      title: 'Professional Journey',
+      title: 'Professional journey',
     },
     certifications: {
-      title: 'Certifications & Training',
+      title: 'Certifications & training',
     },
     portfolio: {
-      title: 'Achievements & Projects',
+      title: 'Achievements & projects',
       viewProject: 'View project',
     },
     blog: {
-      title: 'Blog & Technical Insights',
+      title: 'Blog & technical insights',
       readMore: 'Read more',
       viewAll: 'View all articles',
       readTime: 'min read',
     },
     contact: {
-      title: 'Let\'s Discuss Your Project',
+      title: 'Let\'s discuss your project',
       address: 'Antananarivo, Madagascar',
-      email: 'thierry1804@gmail.com',
-      phone: '+261 34 20 018 04',
-      linkedin: 'https://www.linkedin.com/in/thierry-randriantiana',
-      skype: 'thierrypro75',
+      email: 'contact@haythi.mg',
+      phone: '+261 32 28 383 86',
+      whatsapp: 'https://wa.me/261322838386',
       form: {
         name: 'Full name',
         company: 'Company name',

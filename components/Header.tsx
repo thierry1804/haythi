@@ -29,7 +29,6 @@ export const Header = () => {
     { href: '#services', label: t.nav.services },
     { href: '#about', label: t.nav.about },
     { href: '#skills', label: t.nav.skills },
-    { href: '#experience', label: t.nav.experience },
     { href: '#certifications', label: t.nav.certifications },
     { href: '#blog', label: t.nav.blog },
     { href: '#contact', label: t.nav.contact },

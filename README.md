@@ -83,9 +83,9 @@ Pour activer l'intégration Calendly, modifiez l'URL dans `components/Contact.ts
 
 ## Contact
 
-- Email : thierry1804@gmail.com
-- Téléphone : +261 34 20 018 04
-- LinkedIn : [Thierry Randriantiana](https://www.linkedin.com/in/thierry-randriantiana)
+- Email : contact@haythi.mg
+- Téléphone : +261 32 28 383 86
+- WhatsApp : [HAYTHI](https://wa.me/261322838386)
 
 ## Licence
 

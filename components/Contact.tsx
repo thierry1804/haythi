@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, Phone, MapPin, Linkedin, MessageSquare, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageCircle, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/lib/context/LanguageContext';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
@@ -139,25 +139,17 @@ export const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <Linkedin className="w-6 h-6 text-accent mt-1" />
+                  <MessageCircle className="w-6 h-6 text-accent mt-1" />
                   <div>
-                    <div className="font-semibold text-black">LinkedIn</div>
+                    <div className="font-semibold text-black">WhatsApp</div>
                     <a
-                      href={t.contact.linkedin}
+                      href={t.contact.whatsapp}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-accent hover:text-blue-600 transition-colors duration-300"
                     >
-                      {t.contact.linkedin}
+                      {t.contact.phone}
                     </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <MessageSquare className="w-6 h-6 text-accent mt-1" />
-                  <div>
-                    <div className="font-semibold text-black">Skype</div>
-                    <div className="text-gray-medium">{t.contact.skype}</div>
                   </div>
                 </div>
               </div>
