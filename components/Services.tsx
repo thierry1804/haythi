@@ -62,7 +62,7 @@ export const Services = () => {
                   
                   <div className="mt-auto">
                     <div className="flex flex-wrap gap-2">
-                      {serviceData.details.split(', ').map((tech, i) => (
+                      {serviceData.details.split(', ').map((tech: string, i: number) => (
                         <Badge key={i} variant="primary">
                           {tech}
                         </Badge>
