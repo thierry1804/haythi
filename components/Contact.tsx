@@ -91,7 +91,7 @@ export const Contact = () => {
             >
               <div>
                 <h2 className="text-primary text-sm font-bold uppercase tracking-wider mb-2">Get In Touch</h2>
-                <h3 className="text-title text-4xl font-bold leading-tight mb-4">Let's Build Something Great Together</h3>
+                <h3 className="text-title text-4xl font-bold leading-tight mb-4">Let&apos;s Build Something Great Together</h3>
                 <p className="text-body text-lg leading-relaxed">
                   Ready to start your next project? Contact us for a free consultation. Our team will get back to you within 24 hours.
                 </p>
@@ -131,6 +131,7 @@ export const Contact = () => {
                 </div>
               </div>
               <div className="w-full h-48 rounded-xl overflow-hidden mt-4 relative bg-slate-200 border border-slate-300">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   alt="Map showing location in San Francisco" 
                   className="w-full h-full object-cover opacity-80" 

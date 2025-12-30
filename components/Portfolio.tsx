@@ -45,6 +45,7 @@ export const Portfolio = () => {
                   className="group relative overflow-hidden rounded-xl bg-white border border-border-color shadow-sm hover:shadow-lg transition-all"
                 >
                   <div className="aspect-video w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img 
                       alt={item.title}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
