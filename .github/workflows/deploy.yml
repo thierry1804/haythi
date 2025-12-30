@@ -10,8 +10,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-        NODE_ENV: prod
+    environment: prod
     
     steps:
       - name: Checkout du code
