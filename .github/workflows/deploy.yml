@@ -55,26 +55,28 @@ jobs:
           port: ${{ secrets.VPS_PORT || 22 }}
           script: |
             # Créer le répertoire de déploiement s'il n'existe pas
-            DEPLOY_DIR="${{ secrets.VPS_DEPLOY_DIR || '/var/www/haythi' }}"
-            mkdir -p $DEPLOY_DIR
+            DEPLOY_DIR="${{ secrets.VPS_DEPLOY_DIR || '/var/www/html' }}"
+            sudo mkdir -p $DEPLOY_DIR
             
             # Sauvegarder l'ancienne version
             if [ -d "$DEPLOY_DIR/current" ]; then
               BACKUP_DIR="$DEPLOY_DIR/backups/$(date +%Y%m%d_%H%M%S)"
-              mkdir -p $DEPLOY_DIR/backups
-              mv $DEPLOY_DIR/current $BACKUP_DIR
+              sudo mkdir -p $DEPLOY_DIR/backups
+              sudo mv $DEPLOY_DIR/current $BACKUP_DIR
               echo "Ancienne version sauvegardée dans $BACKUP_DIR"
             fi
             
             # Extraire la nouvelle version
-            mkdir -p $DEPLOY_DIR/current
-            tar -xzf /tmp/deploy.tar.gz -C $DEPLOY_DIR/current
+            sudo mkdir -p $DEPLOY_DIR
+            sudo tar -xzf /tmp/deploy.tar.gz -C $DEPLOY_DIR
+            
+            # Définir les bonnes permissions pour le serveur web
+            sudo chown -R www-data:www-data $DEPLOY_DIR
+            sudo chmod -R 755 $DEPLOY_DIR
             
             # Nettoyer l'archive temporaire
             rm -f /tmp/deploy.tar.gz
             
-            # Créer un lien symbolique vers le répertoire web (si nécessaire)
-            # Si vous utilisez Nginx, vous pouvez pointer vers $DEPLOY_DIR/current
             echo "Déploiement terminé dans $DEPLOY_DIR/current"
             
             # Optionnel : Redémarrer le serveur web
@@ -82,4 +84,3 @@ jobs:
 
       - name: Nettoyage
         run: rm -f deploy.tar.gz
-
