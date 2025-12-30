@@ -1,9 +1,19 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Space_Grotesk, Noto_Sans } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/lib/context/LanguageContext';
 
-const inter = Inter({ subsets: ['latin', 'latin-ext'] });
+const spaceGrotesk = Space_Grotesk({ 
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['300', '400', '500', '600', '700'],
+});
+
+const notoSans = Noto_Sans({ 
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-body',
+  weight: ['400', '500', '700'],
+});
 
 export const metadata: Metadata = {
   title: 'HAYTHI - Expertise IT & Conseil Digital',
@@ -24,7 +34,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className={inter.className}>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={`${spaceGrotesk.variable} ${notoSans.variable} bg-page-bg text-title font-display overflow-x-hidden antialiased`}>
         <LanguageProvider>
           {children}
         </LanguageProvider>

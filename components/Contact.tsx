@@ -5,10 +5,8 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, Phone, MapPin, MessageCircle, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/lib/context/LanguageContext';
-import { Button } from './ui/Button';
-import { Card } from './ui/Card';
 
 // Calendly widget component
 const CalendlyWidget = ({ url }: { url: string }) => {
@@ -79,233 +77,178 @@ export const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-section-lg bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
-            {t.contact.title}
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Contact Information */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card>
-              <h3 className="text-2xl font-bold text-black mb-6">Informations de contact</h3>
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <MapPin className="w-6 h-6 text-accent mt-1" />
+    <section id="contact" className="relative flex w-full flex-col py-16 bg-page-bg-alt">
+      <div className="px-4 md:px-40 flex flex-1 justify-center">
+        <div className="flex flex-col max-w-[1280px] flex-1">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 px-4 py-6">
+            {/* Contact Information */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col gap-8"
+            >
+              <div>
+                <h2 className="text-primary text-sm font-bold uppercase tracking-wider mb-2">Get In Touch</h2>
+                <h3 className="text-title text-4xl font-bold leading-tight mb-4">Let's Build Something Great Together</h3>
+                <p className="text-body text-lg leading-relaxed">
+                  Ready to start your next project? Contact us for a free consultation. Our team will get back to you within 24 hours.
+                </p>
+              </div>
+              <div className="flex flex-col gap-6">
+                <div className="flex items-start gap-4">
+                  <div className="size-12 rounded-lg bg-white border border-border-color flex items-center justify-center text-primary shrink-0 shadow-sm">
+                    <span className="material-symbols-outlined">location_on</span>
+                  </div>
                   <div>
-                    <div className="font-semibold text-black">Adresse</div>
-                    <div className="text-gray-medium">{t.contact.address}</div>
+                    <h4 className="text-title font-bold text-lg">Visit Us</h4>
+                    <p className="text-body">123 Tech Boulevard, Suite 500<br/>San Francisco, CA 94107</p>
                   </div>
                 </div>
-
-                <div className="flex items-start space-x-4">
-                  <Mail className="w-6 h-6 text-accent mt-1" />
+                <div className="flex items-start gap-4">
+                  <div className="size-12 rounded-lg bg-white border border-border-color flex items-center justify-center text-primary shrink-0 shadow-sm">
+                    <span className="material-symbols-outlined">mail</span>
+                  </div>
                   <div>
-                    <div className="font-semibold text-black">Email</div>
-                    <a
-                      href={`mailto:${t.contact.email}`}
-                      className="text-accent hover:text-blue-600 transition-colors duration-300"
-                    >
-                      {t.contact.email}
-                    </a>
+                    <h4 className="text-title font-bold text-lg">Email Us</h4>
+                    <p className="text-body">
+                      contact@haythi.com<br/>
+                      info@haythi.com
+                    </p>
                   </div>
                 </div>
-
-                <div className="flex items-start space-x-4">
-                  <Phone className="w-6 h-6 text-accent mt-1" />
-                  <div>
-                    <div className="font-semibold text-black">Téléphone</div>
-                    <a
-                      href={`tel:${t.contact.phone.replace(/\s/g, '')}`}
-                      className="text-accent hover:text-blue-600 transition-colors duration-300"
-                    >
-                      {t.contact.phone}
-                    </a>
+                <div className="flex items-start gap-4">
+                  <div className="size-12 rounded-lg bg-white border border-border-color flex items-center justify-center text-primary shrink-0 shadow-sm">
+                    <span className="material-symbols-outlined">call</span>
                   </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <MessageCircle className="w-6 h-6 text-accent mt-1" />
                   <div>
-                    <div className="font-semibold text-black">WhatsApp</div>
-                    <a
-                      href={t.contact.whatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:text-blue-600 transition-colors duration-300"
-                    >
-                      {t.contact.phone}
-                    </a>
+                    <h4 className="text-title font-bold text-lg">Call Us</h4>
+                    <p className="text-body">
+                      +1 (555) 123-4567<br/>Mon-Fri, 9am - 6pm PST
+                    </p>
                   </div>
                 </div>
               </div>
-            </Card>
-          </motion.div>
-
-          {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card>
-              <h3 className="text-2xl font-bold text-black mb-6">Formulaire de contact</h3>
-              
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-black mb-2">
-                    {t.contact.form.name} *
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    {...register('name')}
-                    className="w-full px-4 py-3 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-black mb-2">
-                    {t.contact.form.company}
-                  </label>
-                  <input
-                    id="company"
-                    type="text"
-                    {...register('company')}
-                    className="w-full px-4 py-3 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-black mb-2">
-                      {t.contact.form.phone}
-                    </label>
-                    <input
-                      id="phone"
-                      type="tel"
-                      {...register('phone')}
-                      className="w-full px-4 py-3 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-                    />
+              <div className="w-full h-48 rounded-xl overflow-hidden mt-4 relative bg-slate-200 border border-slate-300">
+                <img 
+                  alt="Map showing location in San Francisco" 
+                  className="w-full h-full object-cover opacity-80" 
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBSL9Mupw3pFfV6wq3ykshhgAKvwiX9oGlUWSs-8pQdqPZdAAERbvgZSvJJW01Y2bHmVWxHi7tFXzlITfyMjNOEOJTKoYvC0Tfv646s1yCAgSwsVT9eNk_YTlGvpwDHg9cLlLhFU4o9760h13PJhjxfIV2PycCuPw-2NcrFmsRlcbxJg6stIu4w2yZZBtltUJQHbPlTTdLMNR63tHFLEVsAnDze4b0Y2gBnPxcHAnl07cZL5WAM6FUmix5lgJxRB8PqRXCuBg04L83"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-primary/90 backdrop-blur-sm p-3 rounded-full shadow-lg">
+                    <span className="material-symbols-outlined text-white text-2xl">location_on</span>
                   </div>
+                </div>
+              </div>
+            </motion.div>
 
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-black mb-2">
-                      {t.contact.form.email} *
-                    </label>
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="bg-white border border-border-color p-8 rounded-xl shadow-lg shadow-slate-200/50">
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-title text-sm font-medium">First Name</label>
+                      <input
+                        type="text"
+                        {...register('name')}
+                        className="h-12 w-full rounded-lg bg-slate-50 border border-slate-200 px-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                        placeholder="John"
+                      />
+                      {errors.name && (
+                        <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-title text-sm font-medium">Last Name</label>
+                      <input
+                        type="text"
+                        {...register('company')}
+                        className="h-12 w-full rounded-lg bg-slate-50 border border-slate-200 px-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                        placeholder="Doe"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-title text-sm font-medium">Email Address</label>
                     <input
-                      id="email"
                       type="email"
                       {...register('email')}
-                      className="w-full px-4 py-3 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                      className="h-12 w-full rounded-lg bg-slate-50 border border-slate-200 px-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                      placeholder="john@company.com"
                     />
                     {errors.email && (
                       <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
                     )}
                   </div>
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-black mb-2">
-                    {t.contact.form.subject} *
-                  </label>
-                  <select
-                    id="subject"
-                    {...register('subject')}
-                    className="w-full px-4 py-3 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-                  >
-                    <option value="">-- {t.contact.form.subject} --</option>
-                    <option value="webDev">{t.contact.form.subjects.webDev}</option>
-                    <option value="architecture">{t.contact.form.subjects.architecture}</option>
-                    <option value="projectManagement">{t.contact.form.subjects.projectManagement}</option>
-                    <option value="consulting">{t.contact.form.subjects.consulting}</option>
-                    <option value="training">{t.contact.form.subjects.training}</option>
-                    <option value="other">{t.contact.form.subjects.other}</option>
-                  </select>
-                  {errors.subject && (
-                    <p className="mt-1 text-sm text-red-600">{errors.subject.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-black mb-2">
-                    {t.contact.form.message} *
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={5}
-                    {...register('message')}
-                    className="w-full px-4 py-3 border border-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent resize-none"
-                  />
-                  {errors.message && (
-                    <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
-                  )}
-                </div>
-
-                {submitStatus === 'success' && (
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-                    Message envoyé avec succès !
+                  <div className="flex flex-col gap-2">
+                    <label className="text-title text-sm font-medium">Service Interest</label>
+                    <div className="relative">
+                      <select
+                        {...register('subject')}
+                        className="h-12 w-full appearance-none rounded-lg bg-slate-50 border border-slate-200 px-4 text-title focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                        defaultValue="Custom Software Development"
+                      >
+                        <option>Custom Software Development</option>
+                        <option>Mobile App Development</option>
+                        <option>IT Consulting</option>
+                        <option>Cloud Infrastructure</option>
+                      </select>
+                      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">
+                        <span className="material-symbols-outlined">expand_more</span>
+                      </div>
+                    </div>
+                    {errors.subject && (
+                      <p className="mt-1 text-sm text-red-600">{errors.subject.message}</p>
+                    )}
                   </div>
-                )}
-
-                {submitStatus === 'error' && (
-                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-                    Une erreur est survenue. Veuillez réessayer.
+                  <div className="flex flex-col gap-2">
+                    <label className="text-title text-sm font-medium">Message</label>
+                    <textarea
+                      rows={4}
+                      {...register('message')}
+                      className="w-full rounded-lg bg-slate-50 border border-slate-200 p-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                      placeholder="Tell us about your project..."
+                    />
+                    {errors.message && (
+                      <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
+                    )}
                   </div>
-                )}
-
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button
+                  {submitStatus === 'success' && (
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+                      Message sent successfully!
+                    </div>
+                  )}
+                  {submitStatus === 'error' && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+                      An error occurred. Please try again.
+                    </div>
+                  )}
+                  <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1"
+                    className="mt-2 flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-primary hover:bg-primary-dark transition-colors px-6 text-white text-base font-bold shadow-md shadow-blue-500/20 disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Envoi...
+                        Sending...
                       </>
                     ) : (
-                      t.contact.form.send
+                      'Send Message'
                     )}
-                  </Button>
-                  
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowCalendly(!showCalendly)}
-                    className="flex-1"
-                  >
-                    {t.contact.form.bookAppointment}
-                  </Button>
-                </div>
-              </form>
-
-              {showCalendly && (
-                <div className="mt-8">
-                  <CalendlyWidget url="https://calendly.com/your-username" />
-                </div>
-              )}
-            </Card>
-          </motion.div>
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
