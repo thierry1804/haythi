@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'primary' | 'secondary';
+  variant?: 'default' | 'primary' | 'tertiary';
 }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
@@ -11,11 +11,11 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       <span
         ref={ref}
         className={cn(
-          'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium',
+          'inline-flex items-center px-3 py-1 text-[9px] font-headline tracking-widest uppercase',
           {
-            'bg-gray-light text-gray-dark': variant === 'default',
-            'bg-accent/10 text-accent': variant === 'primary',
-            'bg-gray-medium text-white': variant === 'secondary',
+            'bg-surface-container-highest text-on-surface': variant === 'default',
+            'bg-primary/20 text-primary': variant === 'primary',
+            'bg-tertiary/20 text-tertiary': variant === 'tertiary',
           },
           className
         )}
@@ -28,4 +28,3 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
 );
 
 Badge.displayName = 'Badge';
-

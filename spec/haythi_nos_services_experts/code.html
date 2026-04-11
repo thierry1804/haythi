@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-container": "#ffc0b6",
+                    "surface-container-low": "#1b1c1c",
+                    "surface-variant": "#353535",
+                    "primary-fixed-dim": "#ffb4a7",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "on-error": "#690005",
+                    "surface": "#131313",
+                    "error-container": "#93000a",
+                    "surface-bright": "#393939",
+                    "outline-variant": "#5c403b",
+                    "on-primary": "#680300",
+                    "on-primary-fixed-variant": "#920600",
+                    "on-surface-variant": "#e5beb7",
+                    "tertiary-fixed-dim": "#00daf3",
+                    "secondary": "#c8c6c6",
+                    "primary": "#ffb4a7",
+                    "on-background": "#e4e2e1",
+                    "secondary-fixed": "#e4e2e1",
+                    "on-tertiary-container": "#00e4fe",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#00daf3",
+                    "on-tertiary": "#00363d",
+                    "secondary-container": "#474747",
+                    "on-tertiary-fixed-variant": "#004f58",
+                    "surface-tint": "#ffb4a7",
+                    "surface-container-high": "#2a2a2a",
+                    "inverse-on-surface": "#303030",
+                    "secondary-fixed-dim": "#c8c6c6",
+                    "tertiary-fixed": "#9cf0ff",
+                    "tertiary-container": "#00626e",
+                    "surface-container-lowest": "#0e0e0e",
+                    "inverse-surface": "#e4e2e1",
+                    "outline": "#ac8983",
+                    "on-tertiary-fixed": "#001f24",
+                    "on-primary-fixed": "#400100",
+                    "surface-dim": "#131313",
+                    "on-surface": "#e4e2e1",
+                    "primary-fixed": "#ffdad4",
+                    "on-secondary-container": "#b6b5b4",
+                    "on-secondary": "#303030",
+                    "error": "#ffb4ab",
+                    "background": "#131313",
+                    "surface-container-highest": "#353535",
+                    "primary-container": "#b20f03",
+                    "surface-container": "#1f2020",
+                    "inverse-primary": "#bb1809",
+                    "on-secondary-fixed-variant": "#474747"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .data-grid-overlay {
+            background-image: radial-gradient(#333 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(19, 19, 19, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-tertiary selection:text-on-tertiary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313] backdrop-blur-md bg-opacity-60 border-b border-[#00daf3]/10 flex justify-between items-center px-12 h-20 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="text-2xl font-bold tracking-tighter text-white font-headline">KINETIC_ARCHIVE_SYSTEM</div>
+<div class="hidden md:flex space-x-8">
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-xs text-gray-500 hover:text-white transition-colors" href="#">SERVICES</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-xs text-[#00daf3] border-b-2 border-[#00daf3] pb-1" href="#">SOLUTIONS</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-xs text-gray-500 hover:text-white transition-colors" href="#">CONSULTING</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-xs text-gray-500 hover:text-white transition-colors" href="#">INFRASTRUCTURE</a>
+</div>
+<div class="flex items-center space-x-6 text-[#00daf3]">
+<span class="material-symbols-outlined cursor-pointer hover:bg-[#131313]/80 transition-all duration-300 p-2">settings_input_component</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-[#131313]/80 transition-all duration-300 p-2">terminal</span>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-20 h-full w-64 z-40 bg-[#131313] flex flex-col py-8 bg-gradient-to-r from-[#131313] to-[#1c1c1c] hidden lg:flex">
+<div class="px-6 mb-8">
+<div class="flex items-center space-x-3">
+<div class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></div>
+<span class="font-headline text-[10px] tracking-tight uppercase text-tertiary">OP_STATUS: ACTIVE</span>
+</div>
+<div class="text-[10px] text-gray-600 font-mono mt-1">V.2.0.4_KINETIC</div>
+</div>
+<div class="flex-grow space-y-1">
+<div class="bg-[#00daf3]/10 text-[#00daf3] border-l-4 border-[#00daf3] px-4 py-3 font-headline text-[10px] tracking-tight uppercase flex items-center">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="code_blocks">code_blocks</span>
+                WEB_CORE
+            </div>
+<div class="text-gray-600 px-4 py-3 hover:bg-white/5 hover:pl-6 transition-all duration-300 ease-in-out font-headline text-[10px] tracking-tight uppercase flex items-center cursor-pointer">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="dns">dns</span>
+                PLATFORM_ENGINEERING
+            </div>
+<div class="text-gray-600 px-4 py-3 hover:bg-white/5 hover:pl-6 transition-all duration-300 ease-in-out font-headline text-[10px] tracking-tight uppercase flex items-center cursor-pointer">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="insights">insights</span>
+                STRATEGY_ADVISORY
+            </div>
+<div class="text-gray-600 px-4 py-3 hover:bg-white/5 hover:pl-6 transition-all duration-300 ease-in-out font-headline text-[10px] tracking-tight uppercase flex items-center cursor-pointer">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="settings_accessibility">settings_accessibility</span>
+                IT_OPERATIONS
+            </div>
+</div>
+<div class="px-4 mt-auto space-y-4">
+<button class="w-full py-3 bg-primary-container text-on-primary-container text-[10px] font-headline uppercase tracking-widest rounded-sm hover:opacity-90 transition-opacity">
+                REQUEST_DEPLOYMENT
+            </button>
+<div class="flex items-center text-gray-600 px-4 py-3 hover:bg-white/5 cursor-pointer font-headline text-[10px] tracking-tight uppercase">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="analytics">analytics</span>
+                DIAGNOSTICS
+            </div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="lg:ml-64 pt-20 min-h-screen data-grid-overlay">
+<!-- Hero Section -->
+<section class="px-12 py-24 border-b border-outline-variant/10">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
+<div class="max-w-2xl">
+<div class="flex items-center space-x-4 mb-6">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary font-headline text-[10px] tracking-[0.2em] border border-tertiary/20">PROTOCOL_05: SERVICES</span>
+<div class="h-px w-24 bg-tertiary/20"></div>
+</div>
+<h1 class="font-headline text-6xl md:text-8xl font-bold tracking-tighter text-white mb-8 leading-[0.9]">
+                        ARCHITECTING THE <span class="text-tertiary">FUTURE</span>
+</h1>
+<p class="text-on-surface-variant font-body text-lg leading-relaxed max-w-xl">
+                        Solutions d'ingénierie logicielle de haute précision. Nous transformons des concepts complexes en infrastructures numériques résilientes, évolutives et performantes.
+                    </p>
+</div>
+<div class="hidden md:block font-mono text-[10px] text-gray-500 space-y-1">
+<div>LATENCY: 14MS</div>
+<div>THROUGHPUT: 1.2GB/S</div>
+<div>ENCRYPTION: AES-256-GCM</div>
+<div class="text-tertiary">SYS_STABILITY: 99.99%</div>
+</div>
+</div>
+</section>
+<!-- Services Bento Grid -->
+<section class="px-12 py-24">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Service 1: Web Apps -->
+<div class="md:col-span-8 group relative overflow-hidden bg-surface-container-low border border-outline-variant/5 rounded-sm p-8 transition-all hover:bg-surface-container">
+<div class="flex justify-between items-start mb-16">
+<span class="font-headline text-4xl font-bold text-tertiary/20">01</span>
+<span class="material-symbols-outlined text-tertiary text-4xl" data-icon="terminal">terminal</span>
+</div>
+<h3 class="font-headline text-3xl font-bold text-white mb-4 uppercase tracking-tight">Développement d'Applications Web</h3>
+<p class="text-on-surface-variant font-body mb-8 max-w-md">Construction de SPA et PWA ultra-performantes via React/Next.js. Optimisation du rendu côté serveur et gestion d'état complexe.</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-highest font-headline text-[9px] tracking-widest text-tertiary">REACT.JS</span>
+<span class="px-3 py-1 bg-surface-container-highest font-headline text-[9px] tracking-widest text-tertiary">NEXT.JS</span>
+<span class="px-3 py-1 bg-surface-container-highest font-headline text-[9px] tracking-widest text-tertiary">TYPESCRIPT</span>
+</div>
+<img class="absolute bottom-[-20%] right-[-10%] w-1/3 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none" data-alt="close-up of lines of glowing code on a dark computer monitor with shallow depth of field and blue accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfqj9Kkdo4qIZjxw8MXCzkNRIIqSe5TnJPPqNBvEeevmpwbh6xgcmpDoHm4dGrvTq3EXAUsox4Rx9Voy8nMu5uoedU5cciNqD4G9kIZ6nE8TGYCnOzwfQL6OztpKs5OrOLABDYX4OmSGrfXLwANKE2b38zPjp_Yjo5a_U7X4ynucUUE9cwsIWczzh_23ucWXWiRoe0mseX7zpZCuf7A99p9hShHk8Blc_IrW8ReIdEW6hfFWGnc7aEP6seWWwn-MlC8O7Rt1M5U7c"/>
+</div>
+<!-- Service 2: Sites Immersifs -->
+<div class="md:col-span-4 bg-surface-container-low border border-outline-variant/5 rounded-sm p-8 transition-all hover:bg-surface-container flex flex-col justify-between">
+<div>
+<span class="font-headline text-4xl font-bold text-primary/20">02</span>
+<h3 class="font-headline text-xl font-bold text-white mt-8 mb-4 uppercase">Expériences Immersives</h3>
+<p class="text-on-surface-variant text-sm font-body mb-6">Interfaces UI/UX haute-fidélité, SEO technique avancé et conformité stricte aux standards d'accessibilité WCAG.</p>
+</div>
+<div class="border-t border-outline-variant/10 pt-6">
+<div class="flex items-center text-primary text-[10px] font-headline tracking-widest">
+<span class="mr-2">PROTOCOL_SEO_READY</span>
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Service 3: Conseil IT -->
+<div class="md:col-span-4 bg-surface-container-low border border-outline-variant/5 rounded-sm p-8 transition-all hover:bg-surface-container group">
+<div class="mb-12">
+<span class="font-headline text-4xl font-bold text-tertiary/20">03</span>
+<h3 class="font-headline text-xl font-bold text-white mt-8 mb-4 uppercase">Conseil &amp; Audit</h3>
+<p class="text-on-surface-variant text-sm font-body">Analyse structurelle de codebases, mise en place de pipelines CI/CD automatisés et stratégies de refactoring.</p>
+</div>
+<div class="space-y-3">
+<div class="w-full bg-surface-container-highest h-[2px]">
+<div class="bg-tertiary h-full w-3/4"></div>
+</div>
+<div class="flex justify-between font-mono text-[9px] text-gray-500">
+<span>CODE_EFFICIENCY</span>
+<span>75%</span>
+</div>
+</div>
+</div>
+<!-- Service 4: Infrastructure -->
+<div class="md:col-span-8 bg-surface-container-low border border-outline-variant/5 rounded-sm p-8 transition-all hover:bg-surface-container relative overflow-hidden">
+<div class="flex justify-between items-start mb-16">
+<span class="font-headline text-4xl font-bold text-primary/20">04</span>
+<div class="flex space-x-2">
+<div class="w-12 h-12 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="security">security</span>
+</div>
+<div class="w-12 h-12 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="cloud">cloud</span>
+</div>
+</div>
+</div>
+<div class="max-w-md">
+<h3 class="font-headline text-3xl font-bold text-white mb-4 uppercase tracking-tight">Accompagnement IT &amp; Cloud</h3>
+<p class="text-on-surface-variant font-body mb-8">Déploiement d'architectures cloud hybrides et renforcement de la cybersécurité système. Surveillance proactive 24/7.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-center space-x-3">
+<div class="w-2 h-2 bg-primary"></div>
+<span class="font-mono text-[10px] text-gray-400">AWS / AZURE / GCP</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-2 h-2 bg-primary"></div>
+<span class="font-mono text-[10px] text-gray-400">DOCKER / K8S</span>
+</div>
+</div>
+</div>
+<div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent"></div>
+</div>
+</div>
+</section>
+<!-- Tech Stack Horizontal Scroll/Ticker -->
+<section class="py-12 bg-surface-container-lowest overflow-hidden border-y border-outline-variant/10">
+<div class="flex whitespace-nowrap space-x-24 opacity-30">
+<div class="flex items-center space-x-4 font-headline text-4xl font-bold text-white uppercase tracking-tighter">
+<span>REACT</span><span class="text-tertiary">/</span>
+<span>NODE.JS</span><span class="text-tertiary">/</span>
+<span>DOCKER</span><span class="text-tertiary">/</span>
+<span>AWS</span><span class="text-tertiary">/</span>
+<span>POSTGRES</span><span class="text-tertiary">/</span>
+<span>REDIS</span><span class="text-tertiary">/</span>
+<span>NEXT.JS</span><span class="text-tertiary">/</span>
+<span>KUBERNETES</span>
+</div>
+<div class="flex items-center space-x-4 font-headline text-4xl font-bold text-white uppercase tracking-tighter">
+<span>REACT</span><span class="text-tertiary">/</span>
+<span>NODE.JS</span><span class="text-tertiary">/</span>
+<span>DOCKER</span><span class="text-tertiary">/</span>
+<span>AWS</span><span class="text-tertiary">/</span>
+<span>POSTGRES</span><span class="text-tertiary">/</span>
+<span>REDIS</span><span class="text-tertiary">/</span>
+<span>NEXT.JS</span><span class="text-tertiary">/</span>
+<span>KUBERNETES</span>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="relative bottom-0 w-full bg-[#131313] border-t border-[#00daf3]/20 pt-8 mt-24">
+<div class="max-w-7xl mx-auto px-12 py-12 flex flex-col md:flex-row justify-between items-center opacity-60">
+<div class="font-mono text-[9px] uppercase tracking-[0.2em] text-[#00daf3] mb-8 md:mb-0">
+                    © 2024 KINETIC_ARCHIVE // ENCRYPTED_PROTOCOL
+                </div>
+<div class="flex space-x-8">
+<a class="font-mono text-[9px] uppercase tracking-[0.2em] text-gray-700 hover:text-[#00daf3] hover:tracking-[0.3em] transition-all duration-500" href="#">INTERNAL_DOCS</a>
+<a class="font-mono text-[9px] uppercase tracking-[0.2em] text-gray-700 hover:text-[#00daf3] hover:tracking-[0.3em] transition-all duration-500" href="#">SECURITY_LOGS</a>
+<a class="font-mono text-[9px] uppercase tracking-[0.2em] text-gray-700 hover:text-[#00daf3] hover:tracking-[0.3em] transition-all duration-500" href="#">SYSTEM_STATUS</a>
+<a class="font-mono text-[9px] uppercase tracking-[0.2em] text-gray-700 hover:text-[#00daf3] hover:tracking-[0.3em] transition-all duration-500 text-[#00daf3] underline underline-offset-4" href="#">API_ENDPOINT</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- UI Metadata Floating Element -->
+<div class="fixed bottom-12 right-12 flex flex-col items-end pointer-events-none">
+<div class="glass-panel border border-tertiary/20 p-4 rounded-sm">
+<div class="font-headline text-[10px] tracking-widest text-tertiary mb-2">SYSTEM_HEALTH</div>
+<div class="flex space-x-1">
+<div class="w-1 h-3 bg-tertiary"></div>
+<div class="w-1 h-3 bg-tertiary"></div>
+<div class="w-1 h-3 bg-tertiary"></div>
+<div class="w-1 h-3 bg-tertiary"></div>
+<div class="w-1 h-3 bg-tertiary/20"></div>
+</div>
+</div>
+<div class="mt-4 font-mono text-[8px] text-gray-600 uppercase tracking-widest">
+            NODE_MADAGASCAR_01
+        </div>
+</div>
+</body></html>

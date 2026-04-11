@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, Globe } from 'lucide-react';
+import Link from 'next/link';
+import { Menu, X } from 'lucide-react';
 import { useLanguage } from '@/lib/context/LanguageContext';
 
 export const Header = () => {
@@ -24,81 +24,94 @@ export const Header = () => {
   };
 
   const navLinks = [
-    { href: '#home', label: 'Home' },
-    { href: '#services', label: 'Services' },
-    { href: '#process', label: 'Process' },
-    { href: '#work', label: 'Work' },
-    { href: '#about', label: 'About' },
-    { href: '#contact', label: 'Contact' },
+    { href: '#home', label: 'FLUX' },
+    { href: '#services', label: 'SERVICES' },
+    { href: '#process', label: 'CONSULTING' },
+    { href: '#work', label: 'PROJETS' },
+    { href: '#contact', label: 'TERMINAL' },
   ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300`}>
-      <div className="flex justify-center px-4 md:px-10 py-3">
-        <div className="flex flex-1 items-center justify-between max-w-[1280px]">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="size-8 text-primary flex items-center justify-center">
-              <span className="material-symbols-outlined text-3xl">deployed_code</span>
-            </div>
-            <h2 className="text-title text-xl font-bold leading-tight tracking-[-0.015em]">HayThi</h2>
-          </Link>
+    <header className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-tertiary/10 ambient-shadow">
+      <div className="flex justify-between items-center px-6 md:px-12 h-20">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex items-center gap-3 rounded-lg bg-white/[0.08] px-2.5 py-1.5 backdrop-blur-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary/70"
+        >
+          <Image
+            src="/logo.png"
+            alt="HAYTHI.MG"
+            width={200}
+            height={48}
+            className="h-8 w-auto md:h-9 object-contain object-left invert brightness-[1.08] contrast-[1.06] drop-shadow-[0_0_18px_rgba(255,180,167,0.42)]"
+            priority
+          />
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="flex flex-1 justify-end gap-8">
-            <div className="hidden md:flex items-center gap-9">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-body hover:text-primary transition-colors text-sm font-medium leading-normal"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-            
-            {/* Language Toggle */}
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
-              aria-label="Toggle language"
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
+          {navLinks.map((link, index) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`font-headline uppercase tracking-widest text-xs transition-colors ${
+                index === 0
+                  ? 'text-tertiary border-b border-tertiary pb-1'
+                  : 'text-white/40 hover:text-white'
+              }`}
             >
-              <Globe className="w-4 h-4 text-body" />
-              <span className="text-sm font-medium text-body">{language.toUpperCase()}</span>
-            </button>
+              {link.label}
+            </Link>
+          ))}
+        </div>
 
-            {/* CTA Button */}
-            <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary hover:bg-primary-dark transition-colors text-white text-sm font-bold leading-normal tracking-[0.015em] shadow-md shadow-blue-500/20">
-              <span className="truncate">Get a Quote</span>
-            </button>
+        {/* Right Controls */}
+        <div className="flex items-center gap-4">
+          {/* Language Toggle */}
+          <button
+            onClick={toggleLanguage}
+            className="text-white/40 hover:text-tertiary hover:bg-tertiary/10 p-2 transition-all font-headline text-[10px] tracking-widest uppercase"
+            aria-label="Toggle language"
+          >
+            {language.toUpperCase()}
+          </button>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6 text-title" />
-              ) : (
-                <Menu className="w-6 h-6 text-title" />
-              )}
-            </button>
-          </div>
+          {/* Icons */}
+          <button className="hidden md:flex text-tertiary hover:bg-surface-container-high p-2 transition-all">
+            <span className="material-symbols-outlined">terminal</span>
+          </button>
+
+          {/* CTA Button */}
+          <button className="hidden md:flex items-center justify-center bg-primary-container text-on-primary-container px-6 py-2 font-headline uppercase text-xs tracking-[0.2em] hover:brightness-110 active:scale-95">
+            <span>Connect</span>
+          </button>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 text-on-surface hover:bg-surface-container-high transition-all"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
         </div>
       </div>
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-border-color bg-white">
-          <div className="flex flex-col px-4 py-4 gap-4">
+        <div className="md:hidden bg-surface-container-lowest border-t border-outline-variant/10">
+          <div className="flex flex-col px-6 py-6 gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-body hover:text-primary transition-colors text-sm font-medium py-2"
+                className="text-white/40 hover:text-tertiary hover:bg-tertiary/5 px-4 py-3 font-headline text-[10px] tracking-widest uppercase transition-all"
               >
                 {link.label}
               </Link>
@@ -109,4 +122,3 @@ export const Header = () => {
     </header>
   );
 };
-

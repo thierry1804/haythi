@@ -35,13 +35,12 @@ export const ScrollToTop = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-50 w-12 h-12 bg-accent text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300 flex items-center justify-center"
+          className="fixed bottom-8 right-8 z-50 w-12 h-12 bg-surface-container-high border border-outline-variant/20 text-tertiary flex items-center justify-center hover:bg-surface-bright hover:border-tertiary/30 transition-all glow-tertiary"
           aria-label="Retour en haut"
         >
-          <ArrowUp className="w-6 h-6" />
+          <ArrowUp className="w-5 h-5" />
         </motion.button>
       )}
     </AnimatePresence>
   );
 };
-

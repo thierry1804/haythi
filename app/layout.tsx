@@ -1,27 +1,27 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Noto_Sans } from 'next/font/google';
+import { Space_Grotesk, Inter } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/lib/context/LanguageContext';
 
-const spaceGrotesk = Space_Grotesk({ 
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-display',
   weight: ['300', '400', '500', '600', '700'],
 });
 
-const notoSans = Noto_Sans({ 
+const inter = Inter({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-body',
-  weight: ['400', '500', '700'],
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
-  title: 'HAYTHI - Expertise IT & Conseil Digital',
+  title: 'HAYTHI.MG // Expertise IT & Conseil Digital',
   description: 'Consultant IT Freelance spécialisé en développement web, architecture SI et management de projets. 15+ ans d\'expérience.',
   keywords: 'consultant IT, développement web, Symfony, PHP, architecture SI, management de projets, Madagascar',
   authors: [{ name: 'HAYTHI' }],
   openGraph: {
-    title: 'HAYTHI - Expertise IT & Conseil Digital',
+    title: 'HAYTHI.MG // Expertise IT & Conseil Digital',
     description: 'Consultant IT Freelance | 15+ ans d\'expérience',
     type: 'website',
   },
@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="fr" className="dark" suppressHydrationWarning>
       <head>
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
@@ -41,7 +41,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${spaceGrotesk.variable} ${notoSans.variable} bg-page-bg text-title font-display overflow-x-hidden antialiased`}>
+      <body className={`${spaceGrotesk.variable} ${inter.variable} bg-surface text-on-surface font-body overflow-x-hidden antialiased`}>
         <LanguageProvider>
           {children}
         </LanguageProvider>
@@ -49,4 +49,3 @@ export default function RootLayout({
     </html>
   );
 }
-

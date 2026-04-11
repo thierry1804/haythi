@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KINETIC_ARCHIVE // PROJETS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#1b1c1c",
+                      "background": "#131313",
+                      "on-primary-fixed-variant": "#920600",
+                      "primary": "#ffb4a7",
+                      "outline": "#ac8983",
+                      "on-error-container": "#ffdad6",
+                      "on-tertiary-container": "#00e4fe",
+                      "surface": "#131313",
+                      "on-surface": "#e4e2e1",
+                      "error": "#ffb4ab",
+                      "primary-fixed-dim": "#ffb4a7",
+                      "error-container": "#93000a",
+                      "tertiary-container": "#00626e",
+                      "tertiary-fixed": "#9cf0ff",
+                      "inverse-surface": "#e4e2e1",
+                      "surface-container-highest": "#353535",
+                      "surface-container-high": "#2a2a2a",
+                      "secondary-fixed": "#e4e2e1",
+                      "on-tertiary-fixed": "#001f24",
+                      "tertiary-fixed-dim": "#00daf3",
+                      "surface-tint": "#ffb4a7",
+                      "inverse-primary": "#bb1809",
+                      "primary-fixed": "#ffdad4",
+                      "on-surface-variant": "#e5beb7",
+                      "primary-container": "#b20f03",
+                      "on-tertiary": "#00363d",
+                      "on-error": "#690005",
+                      "outline-variant": "#5c403b",
+                      "on-tertiary-fixed-variant": "#004f58",
+                      "surface-variant": "#353535",
+                      "surface-bright": "#393939",
+                      "surface-container": "#1f2020",
+                      "secondary": "#c8c6c6",
+                      "on-secondary-fixed-variant": "#474747",
+                      "on-secondary-container": "#b6b5b4",
+                      "on-primary-fixed": "#400100",
+                      "on-secondary": "#303030",
+                      "tertiary": "#00daf3",
+                      "secondary-fixed-dim": "#c8c6c6",
+                      "secondary-container": "#474747",
+                      "surface-dim": "#131313",
+                      "surface-container-lowest": "#0e0e0e",
+                      "surface-container-low": "#1b1c1c",
+                      "on-background": "#e4e2e1",
+                      "on-primary": "#680300",
+                      "inverse-on-surface": "#303030",
+                      "on-primary-container": "#ffc0b6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Space Grotesk"],
+                      "body": ["Inter"],
+                      "label": ["Space Grotesk"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .kinetic-grid {
+            background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(19, 19, 19, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-tertiary selection:text-surface-container-lowest kinetic-grid min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-12 h-20 w-full bg-[#131313] backdrop-blur-xl bg-opacity-60 border-b border-[#ffffff15] shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="text-2xl font-bold tracking-widest text-[#00daf3] font-['Space_Grotesk'] uppercase tracking-tighter">
+            KINETIC_ARCHIVE
+        </div>
+<div class="hidden md:flex gap-8 items-center font-['Space_Grotesk'] uppercase tracking-tighter">
+<a class="text-[#ffffff60] hover:text-[#00daf3] transition-colors" href="#">FLUX</a>
+<a class="text-[#ffb4a7] border-b-2 border-[#ffb4a7] pb-1" href="#">PROJETS</a>
+<a class="text-[#ffffff60] hover:text-[#00daf3] transition-colors" href="#">TERMINAL</a>
+<a class="text-[#ffffff60] hover:text-[#00daf3] transition-colors" href="#">ARCHIVE</a>
+</div>
+<div class="flex gap-4 items-center">
+<button class="material-symbols-outlined text-[#ffb4a7] hover:bg-[#ffffff05] transition-all duration-300 p-2">settings_input_component</button>
+<button class="material-symbols-outlined text-[#ffb4a7] hover:bg-[#ffffff05] transition-all duration-300 p-2">account_tree</button>
+</div>
+</nav>
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-20 h-[calc(100vh-80px)] w-64 bg-[#0d0d0d] bg-gradient-to-r from-[#131313] to-[#0d0d0d] hidden lg:flex flex-col py-8 z-40">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container-highest rounded-sm overflow-hidden">
+<img alt="OPERATOR_01" data-alt="close-up of a high-tech robotic interface with glowing cyan circuitry and mechanical details on a dark obsidian surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSx1PRoFSjFsCWHSqRK-7cnyPNoEuQ5wg_HnMhSwM7UPkH_FQlk8MeMiFnhPRVSFtxE5913V9fhdJuH9L5dc8cjpIWmGPhnPSk_OVpgxCWFUQ_7bsxW4OCbirGD6_jVEaVe9V_wlX9OSsf9qwReqAJOcI3wEtxeo9n2Zivm_zF7mtr92Td5ehGdX13vB_21RpxHiASUV9MYMmR9f6oo8joRgQ9doiWCb8OMkATsf8rWAL4gz0_W2OTbMQ7ibbvyoN2c2r9IBpbiKI"/>
+</div>
+<div>
+<p class="font-['Space_Grotesk'] text-[10px] tracking-widest uppercase text-tertiary">OPERATOR_01</p>
+<p class="font-['Space_Grotesk'] text-[8px] tracking-widest uppercase text-on-surface-variant opacity-60">LEVEL_9_ACCESS</p>
+</div>
+</div>
+</div>
+<nav class="flex-1">
+<div class="text-[#ffffff40] py-4 px-6 flex items-center gap-4 hover:text-[#ffffff] transition-all font-['Space_Grotesk'] text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="memory">memory</span> CORE_ENGINE
+            </div>
+<div class="text-[#ffffff40] py-4 px-6 flex items-center gap-4 hover:text-[#ffffff] transition-all font-['Space_Grotesk'] text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span> DATA_VIS
+            </div>
+<div class="text-[#00daf3] bg-[#00daf310] border-r-4 border-[#00daf3] py-4 px-6 flex items-center gap-4 font-['Space_Grotesk'] text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="hub">hub</span> NETWORK_MAP
+            </div>
+<div class="text-[#ffffff40] py-4 px-6 flex items-center gap-4 hover:text-[#ffffff] transition-all font-['Space_Grotesk'] text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span> SYSTEM_LOGS
+            </div>
+<div class="text-[#ffffff40] py-4 px-6 flex items-center gap-4 hover:text-[#ffffff] transition-all font-['Space_Grotesk'] text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="fingerprint">fingerprint</span> AUTH_PROTOCOL
+            </div>
+</nav>
+<div class="mt-auto px-6 space-y-2">
+<button class="w-full py-3 bg-primary-container text-on-primary-container font-['Space_Grotesk'] text-[10px] tracking-widest uppercase rounded-sm hover:scale-95 transition-transform">
+                EXECUTE_NEW_NODE
+            </button>
+<div class="pt-4 border-t border-[#ffffff10]">
+<div class="text-[#ffffff40] py-2 flex items-center gap-4 hover:text-[#ffffff] transition-all font-['Space_Grotesk'] text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="settings">settings</span> SETTINGS
+                </div>
+<div class="text-[#ffffff40] py-2 flex items-center gap-4 hover:text-[#ffffff] transition-all font-['Space_Grotesk'] text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="power_settings_new">power_settings_new</span> LOGOUT
+                </div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 lg:ml-64 pt-20 px-8 md:px-16 pb-24">
+<!-- Hero Section: ARCHIVE_PROJETS -->
+<header class="py-20 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-outline-variant/20 mb-20">
+<div class="max-w-2xl">
+<div class="flex items-center gap-2 mb-4">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse shadow-[0_0_8px_#00daf3]"></span>
+<span class="font-label text-[10px] tracking-[0.3em] uppercase text-tertiary">SYSTEM_STATUS: LIVE</span>
+</div>
+<h1 class="font-headline text-6xl md:text-8xl font-bold uppercase tracking-tighter leading-none mb-6">
+                    ARCHIVE_<br/><span class="text-primary">PROJETS</span>
+</h1>
+<p class="font-body text-on-surface-variant max-w-md text-sm leading-relaxed opacity-80">
+                    Spécialisation en applications web haute performance, solutions mobiles natives et consulting IT stratégique. Une approche technique sober pour des infrastructures critiques.
+                </p>
+</div>
+<div class="text-right">
+<p class="font-label text-[10px] tracking-[0.3em] uppercase text-on-surface-variant opacity-40 mb-2">PORTFOLIO_TECHNIQUE</p>
+<p class="font-headline text-3xl font-light tracking-widest">V.2.0.4</p>
+</div>
+</header>
+<!-- Projects Grid: NODES_DÉPLOYÉS -->
+<section>
+<div class="flex justify-between items-center mb-12">
+<h2 class="font-headline text-2xl font-bold uppercase tracking-widest flex items-center gap-4">
+                    NODES_DÉPLOYÉS
+                    <span class="h-[1px] w-48 bg-outline-variant opacity-30"></span>
+</h2>
+<span class="font-label text-[10px] uppercase text-tertiary">FILTER: ALL_CATEGORIES</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<!-- Project 1: Electracker -->
+<article class="group relative flex flex-col bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 transition-all duration-500 overflow-hidden">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Electracker" class="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" data-alt="futuristic digital dashboard showing neon cyan energy metrics, real-time charts, and data analytics on a dark sleek interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO3bi5wXVCMLBGI400_wFCCE0ZxxEXIAxRw99AOKlOGr825_kQPyOO1KKpndfq5h0Okyp_pwiT1SHpH8-n85RP1L8xNTqQ-w1fkMb1ildpte3IQ9HaFUqYh-fuotmBXhfNvxReOvpdGkitiaYxMtMjK6DOLsdDJ1cwM779JeVg_8pNpLvCgwrtsrCtZ90ZiAVKfGUIcPlfFH1YfNPTW1_heFai5LX1ISLgkDL6XgmaebDcJ3eao1yOfykk0KCHGGMPTUDI_lcMrWg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="px-2 py-1 bg-surface-container-highest text-[8px] font-label tracking-widest uppercase">IoT_INTEGRATION</span>
+<span class="px-2 py-1 bg-tertiary/20 text-tertiary text-[8px] font-label tracking-widest uppercase">REAL_TIME</span>
+</div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline text-4xl font-bold uppercase tracking-tighter text-primary">Electracker</h3>
+<span class="font-label text-[10px] text-on-surface-variant opacity-40">TIMESTAMP // 2023.08</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed mb-8">
+                            Système complexe de surveillance énergétique. Analyse prédictive des flux électriques et monitoring temps réel pour infrastructures industrielles.
+                        </p>
+<div class="mt-auto space-y-4">
+<div class="flex flex-wrap gap-3">
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/20 text-[10px] font-label uppercase">Energy Analytics</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/20 text-[10px] font-label uppercase">InfluxDB</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/20 text-[10px] font-label uppercase">React_Core</span>
+</div>
+<div class="flex justify-between items-center pt-6 border-t border-outline-variant/10">
+<span class="text-[10px] font-label text-tertiary uppercase flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> ACTIVE_NODE
+                                </span>
+<a class="font-label text-[10px] text-on-surface uppercase underline decoration-primary decoration-2 underline-offset-4 hover:text-primary transition-colors" href="#">VIEW_DATA_STRUCTURE</a>
+</div>
+</div>
+</div>
+</article>
+<!-- Project 2: Piggyback -->
+<article class="group relative flex flex-col bg-surface-container-lowest border border-outline-variant/10 hover:border-primary/40 transition-all duration-500 overflow-hidden">
+<div class="aspect-video relative overflow-hidden">
+<img alt="Piggyback" class="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" data-alt="abstract close-up of dark server room cooling systems with dramatic pink and red neon highlights reflected on metallic surfaces" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdR22M6AcqEKBMSMyogsikYDiC3BhNky70Yo5yehUiAgAdUfz6idJcA7V2NIWgQdPsVUM0hj2UWeyRr19F5Ln32NeV7sQ_rdnJnifKjK90WoiMDIyIjJJcqZfVKmJC1z3FDz_eBqerP_d4ARJdMMeq_XT9xRjpItTxziJRC5wpYjmpe4ZHhVHK87_alBiql9iXCSoGs7IsO3EDkVidFVfaRxnnpEM7UPKo8F9JvXmmNt0hBKkqSaNbunQcuA2GmJaTcKOU4EghXg4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="px-2 py-1 bg-surface-container-highest text-[8px] font-label tracking-widest uppercase">CLOUD_INFRA</span>
+<span class="px-2 py-1 bg-primary/20 text-primary text-[8px] font-label tracking-widest uppercase">ENCRYPTED</span>
+</div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline text-4xl font-bold uppercase tracking-tighter text-tertiary">Piggyback</h3>
+<span class="font-label text-[10px] text-on-surface-variant opacity-40">TIMESTAMP // 2024.01</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed mb-8">
+                            Protocole de sauvegarde redondant et infrastructure cloud hybride. Garantit l'intégrité des données via une architecture multi-tenant sécurisée.
+                        </p>
+<div class="mt-auto space-y-4">
+<div class="flex flex-wrap gap-3">
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/20 text-[10px] font-label uppercase">Data Security</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/20 text-[10px] font-label uppercase">AWS_Edge</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/20 text-[10px] font-label uppercase">Rust_Backend</span>
+</div>
+<div class="flex justify-between items-center pt-6 border-t border-outline-variant/10">
+<span class="text-[10px] font-label text-primary uppercase flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> SECURE_UPLINK
+                                </span>
+<a class="font-label text-[10px] text-on-surface uppercase underline decoration-tertiary decoration-2 underline-offset-4 hover:text-tertiary transition-colors" href="#">ACCESS_PROTOCOL</a>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- IT Consulting Banner -->
+<div class="mt-20 p-12 bg-surface-container relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 font-label text-[8px] opacity-10 leading-none">
+                    01011001 01001111 01010101 00100000 01000001 01010010 01000101 00100000 01001000 01000101 01010010 01000101
+                </div>
+<div class="flex flex-col md:flex-row items-center gap-12 relative z-10">
+<div class="md:w-1/3">
+<h4 class="font-headline text-3xl font-bold uppercase tracking-tighter text-on-surface mb-2">IT_CONSULTING</h4>
+<div class="h-1 w-12 bg-tertiary"></div>
+</div>
+<div class="md:w-2/3">
+<p class="font-body text-sm text-on-surface-variant leading-relaxed italic">
+                            "L'ingénierie logicielle ne consiste pas seulement à écrire du code, mais à concevoir des systèmes résilients qui survivent aux environnements de production les plus hostiles."
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- CONTACT_ROOT section -->
+<section class="mt-32 py-20 border-t-2 border-primary/20" id="contact">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-20">
+<div>
+<h2 class="font-headline text-5xl font-bold uppercase tracking-tighter mb-8">CONTACT_<br/><span class="text-tertiary">ROOT</span></h2>
+<p class="font-body text-on-surface-variant text-sm max-w-sm mb-12">
+                        Prêt pour une nouvelle implémentation ? Envoyez vos coordonnées pour établir une connexion sécurisée.
+                    </p>
+<div class="space-y-4">
+<div class="flex items-center gap-4 group">
+<span class="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">terminal</span>
+<span class="font-label text-xs tracking-widest uppercase">terminal@haythi.mg</span>
+</div>
+<div class="flex items-center gap-4 group">
+<span class="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">location_on</span>
+<span class="font-label text-xs tracking-widest uppercase">GEO_LOC: 48.8566° N, 2.3522° E</span>
+</div>
+</div>
+</div>
+<form class="space-y-6 glass-panel p-8 border border-outline-variant/10">
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">IDENTIFIER</label>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/5 transition-all py-2 placeholder:opacity-20 uppercase text-xs" placeholder="NOM_PRENOM" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">COMMS_CHANNEL</label>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/5 transition-all py-2 placeholder:opacity-20 uppercase text-xs" placeholder="EMAIL_ADDR" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">MISSION_DETAILS</label>
+<textarea class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/5 transition-all py-2 placeholder:opacity-20 uppercase text-xs resize-none" placeholder="DESCRIRE_PROJET" rows="4"></textarea>
+</div>
+<button class="w-full py-4 bg-tertiary text-surface font-headline font-bold uppercase tracking-widest hover:bg-[#9cf0ff] active:scale-95 transition-all" type="submit">
+                        TRANSMIT_PACKET
+                    </button>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full py-12 px-12 mt-auto bg-[#131313] border-t border-[#ffffff10] grid grid-cols-1 md:grid-cols-4 items-end w-full">
+<div class="col-span-1 md:col-span-1">
+<div class="font-['Space_Grotesk'] text-[#ffb4a7] text-lg mb-4">KINETIC_ARCHIVE</div>
+<p class="font-['Inter'] text-[10px] tracking-widest uppercase opacity-40 text-on-surface">© 2024 KINETIC_ARCHIVE // PROTOCOL_V.2.0.4</p>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-wrap justify-end gap-12 mt-8 md:mt-0">
+<a class="font-['Inter'] text-[10px] tracking-widest uppercase opacity-40 hover:opacity-100 hover:text-[#00daf3] transition-opacity text-white" href="#">ST_DOCS</a>
+<a class="font-['Inter'] text-[10px] tracking-widest uppercase opacity-40 hover:opacity-100 hover:text-[#00daf3] transition-opacity text-white" href="#">API_ENDPOINT</a>
+<a class="font-['Inter'] text-[10px] tracking-widest uppercase opacity-40 hover:opacity-100 hover:text-[#00daf3] transition-opacity text-white" href="#">SECURITY_VOID</a>
+<a class="font-['Inter'] text-[10px] tracking-widest uppercase opacity-40 hover:opacity-100 hover:text-[#00daf3] transition-opacity text-white" href="#">LEGAL_RAW</a>
+</div>
+</footer>
+</body></html>

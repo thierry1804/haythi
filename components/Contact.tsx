@@ -8,41 +8,18 @@ import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/lib/context/LanguageContext';
 
-// Calendly widget component
-const CalendlyWidget = ({ url }: { url: string }) => {
-  React.useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  return (
-    <div
-      className="calendly-inline-widget"
-      data-url={url}
-      style={{ minWidth: '320px', height: '630px' }}
-    />
-  );
-};
-
 export const Contact = () => {
   const { t } = useLanguage();
-  const [showCalendly, setShowCalendly] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const contactSchema = z.object({
-    name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+    name: z.string().min(2, 'Le nom doit contenir au moins 2 caract\u00e8res'),
     company: z.string().optional(),
     phone: z.string().optional(),
     email: z.string().email('Email invalide'),
-    subject: z.string().min(1, 'Veuillez sélectionner un sujet'),
-    message: z.string().min(10, 'Le message doit contenir au moins 10 caractères'),
+    subject: z.string().min(1, 'Veuillez s\u00e9lectionner un sujet'),
+    message: z.string().min(10, 'Le message doit contenir au moins 10 caract\u00e8res'),
   });
 
   type ContactFormData = z.infer<typeof contactSchema>;
@@ -61,15 +38,11 @@ export const Contact = () => {
     setSubmitStatus('idle');
 
     try {
-      // Simulate API call - replace with actual endpoint
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Here you would send the data to your backend
       console.log('Form data:', data);
-      
       setSubmitStatus('success');
       reset();
-    } catch (error) {
+    } catch {
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -77,10 +50,10 @@ export const Contact = () => {
   };
 
   return (
-    <section id="contact" className="relative flex w-full flex-col py-16 bg-page-bg-alt">
-      <div className="px-4 md:px-40 flex flex-1 justify-center">
-        <div className="flex flex-col max-w-[1280px] flex-1">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 px-4 py-6">
+    <section id="contact" className="relative flex w-full flex-col py-24 border-t-2 border-primary/20">
+      <div className="px-8 md:px-12 lg:px-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-20">
             {/* Contact Information */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -90,57 +63,45 @@ export const Contact = () => {
               className="flex flex-col gap-8"
             >
               <div>
-                <h2 className="text-primary text-sm font-bold uppercase tracking-wider mb-2">Get In Touch</h2>
-                <h3 className="text-title text-4xl font-bold leading-tight mb-4">Let&apos;s Build Something Great Together</h3>
-                <p className="text-body text-lg leading-relaxed">
-                  Ready to start your next project? Contact us for a free consultation. Our team will get back to you within 24 hours.
+                <h2 className="font-headline text-4xl md:text-5xl font-bold uppercase tracking-tighter mb-8 text-on-surface">
+                  CONTACT_<br /><span className="text-tertiary">ROOT</span>
+                </h2>
+                <p className="font-body text-on-surface-variant text-sm max-w-sm mb-12 leading-relaxed">
+                  Pr&ecirc;t pour une nouvelle impl&eacute;mentation ? Envoyez vos coordonn&eacute;es pour &eacute;tablir une connexion s&eacute;curis&eacute;e.
                 </p>
               </div>
-              <div className="flex flex-col gap-6">
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-lg bg-white border border-border-color flex items-center justify-center text-primary shrink-0 shadow-sm">
-                    <span className="material-symbols-outlined">location_on</span>
-                  </div>
-                  <div>
-                    <h4 className="text-title font-bold text-lg">Visit Us</h4>
-                    <p className="text-body">123 Tech Boulevard, Suite 500<br/>San Francisco, CA 94107</p>
-                  </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 group">
+                  <span className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">terminal</span>
+                  <span className="font-label text-xs tracking-widest uppercase text-on-surface">{t.contact.email}</span>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-lg bg-white border border-border-color flex items-center justify-center text-primary shrink-0 shadow-sm">
-                    <span className="material-symbols-outlined">mail</span>
-                  </div>
-                  <div>
-                    <h4 className="text-title font-bold text-lg">Email Us</h4>
-                    <p className="text-body">
-                      contact@haythi.com<br/>
-                      info@haythi.com
-                    </p>
-                  </div>
+                <div className="flex items-center gap-4 group">
+                  <span className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">call</span>
+                  <span className="font-label text-xs tracking-widest uppercase text-on-surface">{t.contact.phone}</span>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-lg bg-white border border-border-color flex items-center justify-center text-primary shrink-0 shadow-sm">
-                    <span className="material-symbols-outlined">call</span>
-                  </div>
-                  <div>
-                    <h4 className="text-title font-bold text-lg">Call Us</h4>
-                    <p className="text-body">
-                      +1 (555) 123-4567<br/>Mon-Fri, 9am - 6pm PST
-                    </p>
-                  </div>
+                <div className="flex items-center gap-4 group">
+                  <span className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">location_on</span>
+                  <span className="font-label text-xs tracking-widest uppercase text-on-surface">{t.contact.address}</span>
                 </div>
               </div>
-              <div className="w-full h-48 rounded-xl overflow-hidden mt-4 relative bg-slate-200 border border-slate-300">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  alt="Map showing location in San Francisco" 
-                  className="w-full h-full object-cover opacity-80" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBSL9Mupw3pFfV6wq3ykshhgAKvwiX9oGlUWSs-8pQdqPZdAAERbvgZSvJJW01Y2bHmVWxHi7tFXzlITfyMjNOEOJTKoYvC0Tfv646s1yCAgSwsVT9eNk_YTlGvpwDHg9cLlLhFU4o9760h13PJhjxfIV2PycCuPw-2NcrFmsRlcbxJg6stIu4w2yZZBtltUJQHbPlTTdLMNR63tHFLEVsAnDze4b0Y2gBnPxcHAnl07cZL5WAM6FUmix5lgJxRB8PqRXCuBg04L83"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-primary/90 backdrop-blur-sm p-3 rounded-full shadow-lg">
-                    <span className="material-symbols-outlined text-white text-2xl">location_on</span>
-                  </div>
+
+              {/* Terminal-style visualization */}
+              <div className="mt-8 bg-surface-container-low border border-outline-variant/30 p-6 overflow-hidden relative">
+                <div className="absolute inset-0 grid-pattern opacity-10"></div>
+                <div className="flex items-center gap-2 mb-4 relative z-10">
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                  <span className="ml-4 font-label text-[10px] text-white/20">terminal &mdash; contact_protocol.sh</span>
+                </div>
+                <div className="font-mono text-[11px] text-tertiary/80 space-y-1 relative z-10">
+                  <p>&gt; init contact --secure</p>
+                  <p className="text-white/40">Establishing encrypted channel...</p>
+                  <p className="text-tertiary">CONNECTION ESTABLISHED: TLS 1.3</p>
+                  <p className="text-on-surface">RESPONSE_TIME: &lt; 24h</p>
+                  <p className="text-on-surface">AVAILABILITY: MON-FRI 09:00-18:00 GMT+3</p>
+                  <p className="animate-pulse">_</p>
                 </div>
               </div>
             </motion.div>
@@ -152,102 +113,101 @@ export const Contact = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <div className="bg-white border border-border-color p-8 rounded-xl shadow-lg shadow-slate-200/50">
-                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex flex-col gap-2">
-                      <label className="text-title text-sm font-medium">First Name</label>
-                      <input
-                        type="text"
-                        {...register('name')}
-                        className="h-12 w-full rounded-lg bg-slate-50 border border-slate-200 px-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                        placeholder="John"
-                      />
-                      {errors.name && (
-                        <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-title text-sm font-medium">Last Name</label>
-                      <input
-                        type="text"
-                        {...register('company')}
-                        className="h-12 w-full rounded-lg bg-slate-50 border border-slate-200 px-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                        placeholder="Doe"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-title text-sm font-medium">Email Address</label>
-                    <input
-                      type="email"
-                      {...register('email')}
-                      className="h-12 w-full rounded-lg bg-slate-50 border border-slate-200 px-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                      placeholder="john@company.com"
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-title text-sm font-medium">Service Interest</label>
-                    <div className="relative">
-                      <select
-                        {...register('subject')}
-                        className="h-12 w-full appearance-none rounded-lg bg-slate-50 border border-slate-200 px-4 text-title focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                        defaultValue="Custom Software Development"
-                      >
-                        <option>Custom Software Development</option>
-                        <option>Mobile App Development</option>
-                        <option>IT Consulting</option>
-                        <option>Cloud Infrastructure</option>
-                      </select>
-                      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">
-                        <span className="material-symbols-outlined">expand_more</span>
-                      </div>
-                    </div>
-                    {errors.subject && (
-                      <p className="mt-1 text-sm text-red-600">{errors.subject.message}</p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-title text-sm font-medium">Message</label>
-                    <textarea
-                      rows={4}
-                      {...register('message')}
-                      className="w-full rounded-lg bg-slate-50 border border-slate-200 p-4 text-title placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
-                      placeholder="Tell us about your project..."
-                    />
-                    {errors.message && (
-                      <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
-                    )}
-                  </div>
-                  {submitStatus === 'success' && (
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-                      Message sent successfully!
-                    </div>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 glass-panel p-8 border border-outline-variant/10">
+                <div className="space-y-2">
+                  <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">IDENTIFIER</label>
+                  <input
+                    type="text"
+                    {...register('name')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs"
+                    placeholder="NOM_PRENOM"
+                  />
+                  {errors.name && (
+                    <p className="text-xs text-error">{errors.name.message}</p>
                   )}
-                  {submitStatus === 'error' && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-                      An error occurred. Please try again.
-                    </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">ORGANIZATION</label>
+                  <input
+                    type="text"
+                    {...register('company')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs"
+                    placeholder="ENTREPRISE"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">COMMS_CHANNEL</label>
+                  <input
+                    type="email"
+                    {...register('email')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs"
+                    placeholder="EMAIL_ADDR"
+                  />
+                  {errors.email && (
+                    <p className="text-xs text-error">{errors.email.message}</p>
                   )}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="mt-2 flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-primary hover:bg-primary-dark transition-colors px-6 text-white text-base font-bold shadow-md shadow-blue-500/20 disabled:opacity-50"
+                </div>
+
+                <div className="space-y-2">
+                  <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">PROTOCOL_TYPE</label>
+                  <select
+                    {...register('subject')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 uppercase text-xs appearance-none"
+                    defaultValue=""
                   >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Sending...
-                      </>
-                    ) : (
-                      'Send Message'
-                    )}
-                  </button>
-                </form>
-              </div>
+                    <option value="" disabled className="bg-surface-container">SELECT_PROTOCOL</option>
+                    <option value="web-dev" className="bg-surface-container">{t.contact.form.subjects.webDev}</option>
+                    <option value="architecture" className="bg-surface-container">{t.contact.form.subjects.architecture}</option>
+                    <option value="management" className="bg-surface-container">{t.contact.form.subjects.projectManagement}</option>
+                    <option value="consulting" className="bg-surface-container">{t.contact.form.subjects.consulting}</option>
+                    <option value="training" className="bg-surface-container">{t.contact.form.subjects.training}</option>
+                  </select>
+                  {errors.subject && (
+                    <p className="text-xs text-error">{errors.subject.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">MISSION_DETAILS</label>
+                  <textarea
+                    rows={4}
+                    {...register('message')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:ring-0 focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs resize-none"
+                    placeholder="DESCRIRE_PROJET"
+                  />
+                  {errors.message && (
+                    <p className="text-xs text-error">{errors.message.message}</p>
+                  )}
+                </div>
+
+                {submitStatus === 'success' && (
+                  <div className="p-4 bg-tertiary/10 border border-tertiary/20 text-tertiary text-xs font-label uppercase tracking-widest">
+                    TRANSMISSION_COMPLETE // MESSAGE_RECEIVED
+                  </div>
+                )}
+                {submitStatus === 'error' && (
+                  <div className="p-4 bg-error-container/20 border border-error/20 text-error text-xs font-label uppercase tracking-widest">
+                    ERROR_PROTOCOL // RETRY_TRANSMISSION
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-tertiary text-on-tertiary font-headline font-bold uppercase tracking-widest text-xs hover:bg-tertiary-fixed active:scale-95 transition-all disabled:opacity-50 glow-tertiary"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      TRANSMITTING...
+                    </span>
+                  ) : (
+                    'TRANSMIT_PACKET'
+                  )}
+                </button>
+              </form>
             </motion.div>
           </div>
         </div>
@@ -255,4 +215,3 @@ export const Contact = () => {
     </section>
   );
 };
-

@@ -12,21 +12,21 @@ export const Certifications = () => {
   const { t } = useLanguage();
 
   return (
-    <section id="certifications" className="py-section-lg bg-gray-light">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="certifications" className="py-section-lg bg-surface-container-lowest">
+      <div className="max-w-4xl mx-auto px-8 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 className="font-headline text-3xl md:text-5xl font-bold text-on-surface tracking-tighter uppercase">
             {t.certifications.title}
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {certifications.map((cert, index) => (
             <motion.div
               key={cert.id}
@@ -36,29 +36,27 @@ export const Certifications = () => {
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
               <Card hover className="h-full">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Award className="w-6 h-6 text-accent" />
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-tertiary/10 flex items-center justify-center shrink-0">
+                    <Award className="w-6 h-6 text-tertiary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-black mb-2">
+                    <h3 className="text-lg font-bold text-on-surface font-headline uppercase tracking-tight mb-2">
                       {cert.title}
                     </h3>
-                    <div className="flex items-center space-x-2 mb-3">
-                      <Badge variant="secondary">{cert.year}</Badge>
-                      <span className="text-sm text-gray-medium">
-                        {cert.issuer}
-                      </span>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Badge>{cert.year}</Badge>
+                      <span className="text-xs text-on-surface-variant">{cert.issuer}</span>
                     </div>
                     {cert.link && (
                       <a
                         href={cert.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center space-x-2 text-accent hover:text-blue-600 transition-colors duration-300"
+                        className="inline-flex items-center gap-2 text-tertiary hover:text-tertiary-fixed transition-colors font-label text-[10px] uppercase tracking-widest"
                       >
-                        <span className="text-sm font-medium">Voir le certificat</span>
-                        <ExternalLink className="w-4 h-4" />
+                        <span>VIEW_CERTIFICATE</span>
+                        <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                   </div>
@@ -71,4 +69,3 @@ export const Certifications = () => {
     </section>
   );
 };
-
