@@ -1,5 +1,8 @@
+import { useI18n } from '../i18n';
+
 export default function Footer() {
   const year = new Date().getFullYear();
+  const { t } = useI18n();
 
   return (
     <footer className="border-t border-outline-variant/10 bg-surface-container-lowest">
@@ -16,17 +19,17 @@ export default function Footer() {
             </span>
           </div>
 
-          <nav className="flex flex-wrap gap-6">
+          <nav className="flex flex-wrap gap-6" aria-label="Footer">
             {[
-              { label: 'Services', href: '#services' },
-              { label: 'Projets', href: '#work' },
-              { label: 'Contact', href: '#contact' },
-              { label: 'Privacy', href: '#' },
+              { label: t('footerServices'), href: '#services' },
+              { label: t('footerProjects'), href: '#work' },
+              { label: t('footerContact'), href: '#contact' },
+              { label: t('footerPrivacy'), href: '#privacy' },
             ].map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="font-label text-[10px] tracking-widest uppercase text-white/40 hover:text-tertiary transition-colors"
+                className="font-label text-[10px] tracking-widest uppercase text-white/40 hover:text-tertiary transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary"
               >
                 {link.label}
               </a>

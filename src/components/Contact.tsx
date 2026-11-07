@@ -1,6 +1,17 @@
 import { FormEvent, useState } from 'react';
+import { useI18n } from '../i18n';
+
+const protocolLabels: Record<string, string> = {
+  'web-dev': 'Développement Web',
+  architecture: 'Architecture SI',
+  management: 'Management project',
+  consulting: 'Conseil',
+  training: 'Formation',
+};
 
 export default function Contact() {
+  const { t } = useI18n();
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -11,8 +22,39 @@ export default function Contact() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setStatus('sending');
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
+    if (!formData.name.trim() || !emailOk || !formData.subject || !formData.message.trim()) {
+      setStatus('error');
+      return;
+    }
+
+    const protocol = protocolLabels[formData.subject] ?? formData.subject;
+    const body = [
+      `IDENTIFIER: ${formData.name.trim()}`,
+      `ORGANIZATION: ${formData.company.trim() || 'N/A'}`,
+      `COMMS_CHANNEL: ${formData.email.trim()}`,
+      `PROTOCOL_TYPE: ${protocol}`,
+      '',
+      'MISSION_DETAILS:',
+      formData.message.trim(),
+    ].join('\n');
+
+    const mailto = `mailto:contact@haythi.mg?subject=${encodeURIComponent(
+      `[HAYTHI] ${protocol}`
+    )}&body=${encodeURIComponent(body)}`;
+
+    try {
+      window.location.href = mailto;
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
   };
+
+  const fieldClass =
+    'w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:outline-none focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs focus-visible:ring-0';
 
   return (
     <section id="contact" className="relative flex w-full flex-col py-24 border-t-2 border-primary/20">
@@ -27,33 +69,41 @@ export default function Contact() {
                   <span className="text-tertiary">ROOT</span>
                 </h2>
                 <p className="font-body text-on-surface-variant text-sm max-w-sm mb-12 leading-relaxed">
-                  Prêt pour une nouvelle implémentation ? Envoyez vos coordonnées pour établir une
-                  connexion sécurisée.
+                  {t('contactIntro')}
                 </p>
               </div>
 
               <div className="space-y-4">
                 <a
                   href="mailto:contact@haythi.mg"
-                  className="flex items-center gap-4 group"
+                  className="flex items-center gap-4 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary"
                 >
-                  <span className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">
+                  <span
+                    className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform"
+                    aria-hidden="true"
+                  >
                     terminal
                   </span>
                   <span className="font-label text-xs tracking-widest uppercase text-on-surface">
                     contact@haythi.mg
                   </span>
                 </a>
-                <a href="tel:+261322838386" className="flex items-center gap-4 group">
-                  <span className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">
+                <a
+                  href="tel:+261322838386"
+                  className="flex items-center gap-4 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary"
+                >
+                  <span
+                    className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform"
+                    aria-hidden="true"
+                  >
                     call
                   </span>
                   <span className="font-label text-xs tracking-widest uppercase text-on-surface">
                     +261 32 28 383 86
                   </span>
                 </a>
-                <div className="flex items-center gap-4 group">
-                  <span className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">
+                <div className="flex items-center gap-4">
+                  <span className="material-symbols-outlined text-primary" aria-hidden="true">
                     location_on
                   </span>
                   <span className="font-label text-xs tracking-widest uppercase text-on-surface">
@@ -78,66 +128,106 @@ export default function Contact() {
                   <p className="text-tertiary">CONNECTION ESTABLISHED: TLS 1.3</p>
                   <p className="text-on-surface">RESPONSE_TIME: &lt; 24h</p>
                   <p className="text-on-surface">AVAILABILITY: MON-FRI 09:00-18:00 GMT+3</p>
-                  <p className="animate-pulse">_</p>
+                  <p className="animate-pulse" aria-hidden="true">
+                    _
+                  </p>
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6 glass-panel p-8 border border-outline-variant/10">
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className="space-y-6 glass-panel p-8 border border-outline-variant/10"
+            >
               <div className="space-y-2">
-                <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">
+                <label
+                  htmlFor="identifier"
+                  className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60"
+                >
                   IDENTIFIER
                 </label>
                 <input
+                  id="identifier"
                   type="text"
                   name="name"
                   required
+                  maxLength={120}
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:outline-none focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs"
+                  onChange={(e) => {
+                    setStatus('idle');
+                    setFormData({ ...formData, name: e.target.value });
+                  }}
+                  className={fieldClass}
                   placeholder="NOM_PRENOM"
+                  autoComplete="name"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">
+                <label
+                  htmlFor="organization"
+                  className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60"
+                >
                   ORGANIZATION
                 </label>
                 <input
+                  id="organization"
                   type="text"
                   name="company"
+                  maxLength={160}
                   value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:outline-none focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs"
+                  onChange={(e) => {
+                    setStatus('idle');
+                    setFormData({ ...formData, company: e.target.value });
+                  }}
+                  className={fieldClass}
                   placeholder="ENTREPRISE"
+                  autoComplete="organization"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">
+                <label
+                  htmlFor="comms"
+                  className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60"
+                >
                   COMMS_CHANNEL
                 </label>
                 <input
+                  id="comms"
                   type="email"
                   name="email"
                   required
+                  maxLength={160}
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:outline-none focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs"
+                  onChange={(e) => {
+                    setStatus('idle');
+                    setFormData({ ...formData, email: e.target.value });
+                  }}
+                  className={fieldClass}
                   placeholder="EMAIL_ADDR"
+                  autoComplete="email"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">
+                <label
+                  htmlFor="protocol"
+                  className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60"
+                >
                   PROTOCOL_TYPE
                 </label>
                 <select
+                  id="protocol"
                   name="subject"
                   required
                   value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:outline-none focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 uppercase text-xs appearance-none"
+                  onChange={(e) => {
+                    setStatus('idle');
+                    setFormData({ ...formData, subject: e.target.value });
+                  }}
+                  className={`${fieldClass} appearance-none`}
                 >
                   <option value="" disabled className="bg-surface-container">
                     SELECT_PROTOCOL
@@ -161,25 +251,51 @@ export default function Contact() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">
+                <label
+                  htmlFor="mission"
+                  className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60"
+                >
                   MISSION_DETAILS
                 </label>
                 <textarea
+                  id="mission"
                   name="message"
                   required
                   rows={4}
+                  maxLength={4000}
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:outline-none focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs resize-none"
+                  onChange={(e) => {
+                    setStatus('idle');
+                    setFormData({ ...formData, message: e.target.value });
+                  }}
+                  className={`${fieldClass} resize-none`}
                   placeholder="DESCRIRE_PROJET"
                 />
               </div>
 
+              {status === 'success' && (
+                <div
+                  role="status"
+                  className="p-4 bg-tertiary/10 border border-tertiary/20 text-tertiary text-xs font-label uppercase tracking-widest"
+                >
+                  {t('transmitOk')}
+                </div>
+              )}
+              {status === 'error' && (
+                <div
+                  role="alert"
+                  className="p-4 bg-primary-container/20 border border-primary/30 text-primary text-xs font-label uppercase tracking-widest"
+                >
+                  {t('transmitErr')}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-4 bg-tertiary text-on-tertiary font-headline font-bold uppercase tracking-widest text-xs hover:bg-tertiary-fixed active:scale-95 transition-all glow-tertiary"
+                disabled={status === 'sending'}
+                className="w-full py-4 bg-tertiary text-on-tertiary font-headline font-bold uppercase tracking-widest text-xs hover:bg-tertiary-fixed active:scale-95 transition-all disabled:opacity-50 glow-tertiary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
               >
-                TRANSMIT_PACKET
+                {status === 'sending' ? t('transmitting') : t('transmit')}
               </button>
             </form>
           </div>

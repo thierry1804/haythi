@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n';
+
 const projects = [
   {
     title: 'Electracker',
@@ -13,7 +15,8 @@ const projects = [
       'Système complexe de surveillance énergétique. Analyse prédictive des flux électriques et monitoring temps réel pour infrastructures industrielles.',
     tags: ['Energy Analytics', 'InfluxDB', 'React_Core'],
     status: { label: 'ACTIVE_NODE', color: 'text-tertiary', dot: 'bg-tertiary' },
-    link: { label: 'VIEW_DATA_STRUCTURE', decoration: 'decoration-primary' },
+    mailtoSubject: 'NODE // Electracker',
+    linkDecoration: 'decoration-primary',
   },
   {
     title: 'Piggyback',
@@ -29,11 +32,14 @@ const projects = [
       'Protocole de sauvegarde redondant et infrastructure cloud hybride. Garantit l’intégrité des données via une architecture multi-tenant sécurisée.',
     tags: ['Data Security', 'AWS_Edge', 'Rust_Backend'],
     status: { label: 'SECURE_UPLINK', color: 'text-primary', dot: 'bg-primary' },
-    link: { label: 'ACCESS_PROTOCOL', decoration: 'decoration-tertiary' },
+    mailtoSubject: 'NODE // Piggyback',
+    linkDecoration: 'decoration-tertiary',
   },
 ];
 
 export default function Portfolio() {
+  const { t } = useI18n();
+
   return (
     <section id="work" className="relative flex w-full flex-col data-grid-overlay">
       <div className="px-8 md:px-12 lg:px-24 py-24">
@@ -106,10 +112,10 @@ export default function Portfolio() {
                         {project.status.label}
                       </span>
                       <a
-                        href="#contact"
-                        className={`font-label text-[10px] text-on-surface uppercase underline ${project.link.decoration} decoration-2 underline-offset-4 hover:text-tertiary transition-colors cursor-pointer`}
+                        href={`mailto:contact@haythi.mg?subject=${encodeURIComponent(project.mailtoSubject)}`}
+                        className={`font-label text-[10px] text-on-surface uppercase underline ${project.linkDecoration} decoration-2 underline-offset-4 hover:text-tertiary transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary`}
                       >
-                        {project.link.label}
+                        {t('projectCta')}
                       </a>
                     </div>
                   </div>

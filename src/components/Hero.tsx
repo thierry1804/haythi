@@ -1,65 +1,67 @@
+import HeroNetworkCanvas from './HeroNetworkCanvas';
+import { useI18n } from '../i18n';
+
 export default function Hero() {
+  const { t } = useI18n();
+
   return (
     <section
       id="home"
-      className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden bg-surface"
+      className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden data-grid-overlay"
     >
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-        style={{
-          background:
-            'radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0, 218, 243, 0.07), transparent 70%), radial-gradient(ellipse 40% 35% at 80% 20%, rgba(255, 180, 167, 0.05), transparent 60%)',
-        }}
-      />
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-tertiary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
+      </div>
 
-      <div className="relative z-10 px-8 md:px-12 lg:px-24 pt-28 pb-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="inline-flex items-center border border-tertiary/60 px-3 py-1.5 mb-8">
-            <span className="font-label text-tertiary text-[10px] uppercase tracking-[0.25em]">
-              PROTOCOL_01: SERVICES
-            </span>
+      <HeroNetworkCanvas />
+
+      <div className="relative z-10 px-8 md:px-12 lg:px-24 py-24">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-4 mb-8 animate-hero-in">
+              <span className="px-3 py-1 bg-tertiary/10 text-tertiary font-headline text-[10px] tracking-[0.2em] border border-tertiary/20">
+                {t('protocol01')}
+              </span>
+              <div className="h-px w-24 bg-tertiary/20" />
+            </div>
+
+            <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-on-surface mb-8 leading-[0.9] animate-hero-in [animation-delay:120ms]">
+              {t('heroTitleLead')}{' '}
+              <span className="text-tertiary">{t('heroTitleAccent')}</span>
+            </h1>
+
+            <p className="text-on-surface-variant font-body text-lg leading-relaxed max-w-xl mb-8 animate-hero-in [animation-delay:240ms]">
+              {t('heroBody')}
+            </p>
+
+            <div className="flex flex-wrap gap-4 animate-hero-in [animation-delay:360ms]">
+              <a
+                href="#services"
+                className="group relative bg-tertiary text-on-tertiary font-headline font-bold uppercase py-4 px-8 text-xs tracking-[0.2em] overflow-hidden transition-all hover:scale-105 active:scale-95 glow-tertiary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+              >
+                <span className="relative z-10">{t('ctaServices')}</span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              </a>
+              <a
+                href="#contact"
+                className="bg-transparent border border-outline text-tertiary font-headline uppercase py-4 px-8 text-xs tracking-[0.2em] hover:bg-tertiary/5 hover:border-tertiary/50 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary"
+              >
+                {t('ctaRdv')}
+              </a>
+            </div>
           </div>
 
-          <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.95] mb-8 max-w-5xl">
-            <span className="text-on-surface">EXPERTISE IT &amp;</span>
-            <br />
-            <span className="bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent">
-              CONSULTING
-            </span>
-          </h1>
-
-          <p className="font-body text-on-surface-variant text-sm md:text-base max-w-2xl leading-relaxed mb-10">
-            Consultant IT Freelance | 15+ ans d&apos;expérience. Solutions d&apos;ingénierie logicielle
-            de haute précision. Nous transformons des concepts complexes en infrastructures numériques
-            résilientes et performantes.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 mb-16">
-            <a
-              href="#services"
-              className="inline-flex items-center justify-center px-6 py-3.5 bg-tertiary text-on-tertiary font-headline text-xs font-bold uppercase tracking-widest hover:bg-tertiary-fixed transition-colors"
-            >
-              DÉCOUVRIR MES SERVICES
-            </a>
-            <a
-              href="#contact"
-              className="inline-flex items-center justify-center px-6 py-3.5 border border-primary text-tertiary font-headline text-xs font-bold uppercase tracking-widest hover:bg-primary/5 transition-colors"
-            >
-              PRENDRE RDV
-            </a>
+          <div className="hidden md:block font-mono text-[10px] text-white/30 space-y-1 text-right animate-hero-in [animation-delay:480ms]">
+            <div>LATENCY: 14MS</div>
+            <div>THROUGHPUT: 1.2GB/S</div>
+            <div>ENCRYPTION: AES-256-GCM</div>
+            <div className="text-tertiary">SYS_STABILITY: 99.99%</div>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-8 right-8 md:right-12 hidden sm:block font-mono text-[10px] text-white/30 space-y-1 text-right">
-        <p>LATENCY: 14MS</p>
-        <p>THROUGHPUT: 1.2GB/S</p>
-        <p>ENCRYPTION: AES-256-GCM</p>
-        <p>
-          SYS_STABILITY: <span className="text-tertiary">99.99%</span>
-        </p>
-      </div>
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-outline-variant/10" />
     </section>
   );
 }

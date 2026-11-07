@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
-
-const navItems = [
-  { label: 'FLUX', href: '#home' },
-  { label: 'SERVICES', href: '#services' },
-  { label: 'CONSULTING', href: '#process' },
-  { label: 'PROJETS', href: '#work' },
-  { label: 'TERMINAL', href: '#contact' },
-];
+import { useI18n } from '../i18n';
 
 export default function Header() {
+  const { lang, toggleLang, t } = useI18n();
   const [active, setActive] = useState('#home');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [lang, setLang] = useState<'FR' | 'EN'>('FR');
+
+  const navItems = [
+    { label: t('navFlux'), href: '#home' },
+    { label: t('navServices'), href: '#services' },
+    { label: t('navConsulting'), href: '#process' },
+    { label: t('navProjects'), href: '#work' },
+    { label: t('navTerminal'), href: '#contact' },
+  ];
 
   useEffect(() => {
     const onScroll = () => {
-      const ids = ['home', 'services', 'process', 'work', 'contact'];
+      const ids = ['home', 'services', 'process', 'work', 'contact', 'privacy'];
       for (const id of [...ids].reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY + 120 >= el.offsetTop) {
@@ -28,10 +29,25 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-tertiary/10 ambient-shadow">
       <div className="flex justify-between items-center px-6 md:px-12 h-20">
-        <a href="#home" className="flex items-center gap-3 group">
+        <a href="#home" className="flex items-center gap-3 group" onClick={() => setMobileOpen(false)}>
           <img
             src="/mark-light.webp"
             alt="HAYTHI.MG"
@@ -42,12 +58,12 @@ export default function Header() {
           </span>
         </a>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8" aria-label="Primary">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className={`font-headline uppercase tracking-widest text-xs transition-colors ${
+              className={`font-headline uppercase tracking-widest text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary ${
                 active === item.href
                   ? 'text-tertiary border-b border-tertiary pb-1'
                   : 'text-white/40 hover:text-white'
@@ -61,44 +77,59 @@ export default function Header() {
         <div className="flex items-center gap-2 md:gap-4">
           <button
             type="button"
-            aria-label="Toggle language"
-            onClick={() => setLang((l) => (l === 'FR' ? 'EN' : 'FR'))}
-            className="text-white/40 hover:text-tertiary hover:bg-tertiary/10 p-2 transition-all font-headline text-[10px] tracking-widest uppercase"
+            aria-label={t('toggleLang')}
+            onClick={toggleLang}
+            className="text-white/40 hover:text-tertiary hover:bg-tertiary/10 p-2 transition-all font-headline text-[10px] tracking-widest uppercase focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary"
           >
             {lang}
           </button>
           <a
-            aria-label="Aller à la section contact"
+            aria-label={t('navTerminal')}
             href="#contact"
-            className="hidden md:flex text-tertiary hover:bg-surface-container-high p-2 transition-all"
+            className="hidden md:flex text-tertiary hover:bg-surface-container-high p-2 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary"
           >
-            <span className="material-symbols-outlined text-xl">terminal</span>
+            <span className="material-symbols-outlined text-xl" aria-hidden="true">
+              terminal
+            </span>
           </a>
           <a
             href="#contact"
-            className="hidden sm:inline-flex px-4 py-2 bg-primary-container text-white font-headline text-[10px] tracking-widest uppercase hover:brightness-110 transition-all"
+            className="hidden sm:inline-flex px-4 py-2 bg-primary-container text-white font-headline text-[10px] tracking-widest uppercase hover:brightness-110 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary"
           >
-            CONNECT
+            {t('connect')}
           </a>
           <button
             type="button"
-            className="md:hidden text-on-surface p-2"
-            aria-label="Menu"
+            className={`burger md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary ${
+              mobileOpen ? 'is-open' : ''
+            }`}
+            aria-label={mobileOpen ? t('closeMenu') : t('openMenu')}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
             onClick={() => setMobileOpen((o) => !o)}
           >
-            <span className="material-symbols-outlined">{mobileOpen ? 'close' : 'menu'}</span>
+            <span className="burger-line" />
+            <span className="burger-line" />
+            <span className="burger-line" />
           </button>
         </div>
       </div>
 
-      {mobileOpen && (
-        <div className="md:hidden border-t border-tertiary/10 px-6 py-4 space-y-3 bg-surface">
-          {navItems.map((item) => (
+      <div
+        id="mobile-nav"
+        className={`mobile-panel md:hidden ${mobileOpen ? 'is-open' : ''}`}
+        aria-hidden={!mobileOpen}
+      >
+        <div className="mobile-panel-inner border-t border-tertiary/10 px-6 pb-6 pt-2 bg-surface/95 backdrop-blur-md">
+          {navItems.map((item, index) => (
             <a
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className="block font-headline uppercase tracking-widest text-xs text-white/60 hover:text-tertiary py-2"
+              style={{ transitionDelay: mobileOpen ? `${80 + index * 50}ms` : '0ms' }}
+              className={`mobile-link block font-headline uppercase tracking-widest text-xs py-3 border-b border-outline-variant/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-tertiary ${
+                active === item.href ? 'text-tertiary' : 'text-white/60 hover:text-tertiary'
+              }`}
             >
               {item.label}
             </a>
@@ -106,12 +137,13 @@ export default function Header() {
           <a
             href="#contact"
             onClick={() => setMobileOpen(false)}
-            className="inline-flex px-4 py-2 bg-primary-container text-white font-headline text-[10px] tracking-widest uppercase"
+            style={{ transitionDelay: mobileOpen ? `${80 + navItems.length * 50}ms` : '0ms' }}
+            className="mobile-link mt-5 inline-flex px-4 py-2.5 bg-primary-container text-white font-headline text-[10px] tracking-widest uppercase"
           >
-            CONNECT
+            {t('connect')}
           </a>
         </div>
-      )}
+      </div>
     </header>
   );
 }
