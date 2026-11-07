@@ -1,152 +1,139 @@
-import { useEffect, useRef, useState } from 'react';
-import { ExternalLink, Sparkles } from 'lucide-react';
-
 const projects = [
   {
-    title: 'Plateforme E-Commerce',
-    category: 'Développement Web',
-    description: 'Solution complète de commerce en ligne avec gestion des stocks et analytics avancés',
-    tags: ['React', 'Node.js', 'PostgreSQL'],
-    gradient: 'from-cyan-500 to-blue-600',
+    title: 'Electracker',
+    titleColor: 'text-primary',
+    timestamp: '2023.08',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuDO3bi5wXVCMLBGI400_wFCCE0ZxxEXIAxRw99AOKlOGr825_kQPyOO1KKpndfq5h0Okyp_pwiT1SHpH8-n85RP1L8xNTqQ-w1fkMb1ildpte3IQ9HaFUqYh-fuotmBXhfNvxReOvpdGkitiaYxMtMjK6DOLsdDJ1cwM779JeVg_8pNpLvCgwrtsrCtZ90ZiAVKfGUIcPlfFH1YfNPTW1_heFai5LX1ISLgkDL6XgmaebDcJ3eao1yOfykk0KCHGGMPTUDI_lcMrWg',
+    badges: [
+      { label: 'IoT_INTEGRATION', className: 'bg-surface-container-highest text-on-surface' },
+      { label: 'REAL_TIME', className: 'bg-tertiary/20 text-tertiary' },
+    ],
+    description:
+      'Système complexe de surveillance énergétique. Analyse prédictive des flux électriques et monitoring temps réel pour infrastructures industrielles.',
+    tags: ['Energy Analytics', 'InfluxDB', 'React_Core'],
+    status: { label: 'ACTIVE_NODE', color: 'text-tertiary', dot: 'bg-tertiary' },
+    link: { label: 'VIEW_DATA_STRUCTURE', decoration: 'decoration-primary' },
   },
   {
-    title: 'Système ERP',
-    category: 'Consultance SI',
-    description: 'Implémentation d\'un ERP sur-mesure pour optimiser les processus métier',
-    tags: ['Cloud', 'Microservices', 'API'],
-    gradient: 'from-blue-500 to-indigo-600',
-  },
-  {
-    title: 'Dashboard Analytics',
-    category: 'Data & IA',
-    description: 'Tableau de bord interactif avec visualisations en temps réel et prédictions IA',
-    tags: ['Python', 'TensorFlow', 'D3.js'],
-    gradient: 'from-indigo-500 to-blue-600',
-  },
-  {
-    title: 'Infrastructure Cloud',
-    category: 'DevOps',
-    description: 'Migration et optimisation d\'infrastructure vers une architecture cloud-native',
-    tags: ['AWS', 'Kubernetes', 'Terraform'],
-    gradient: 'from-blue-500 to-cyan-500',
-  },
-  {
-    title: 'Application Mobile',
-    category: 'Développement Mobile',
-    description: 'Application cross-platform avec synchronisation temps réel',
-    tags: ['React Native', 'Firebase', 'Redux'],
-    gradient: 'from-cyan-400 to-teal-500',
-  },
-  {
-    title: 'Sécurité & Audit',
-    category: 'Cybersécurité',
-    description: 'Audit complet de sécurité et mise en place de mesures de protection',
-    tags: ['Pentesting', 'SIEM', 'Conformité'],
-    gradient: 'from-blue-600 to-indigo-600',
+    title: 'Piggyback',
+    titleColor: 'text-tertiary',
+    timestamp: '2024.01',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBdR22M6AcqEKBMSMyogsikYDiC3BhNky70Yo5yehUiAgAdUfz6idJcA7V2NIWgQdPsVUM0hj2UWeyRr19F5Ln32NeV7sQ_rdnJnifKjK90WoiMDIyIjJJcqZfVKmJC1z3FDz_eBqerP_d4ARJdMMeq_XT9xRjpItTxziJRC5wpYjmpe4ZHhVHK87_alBiql9iXCSoGs7IsO3EDkVidFVfaRxnnpEM7UPKo8F9JvXmmNt0hBKkqSaNbunQcuA2GmJaTcKOU4EghXg4',
+    badges: [
+      { label: 'CLOUD_INFRA', className: 'bg-surface-container-highest text-on-surface' },
+      { label: 'ENCRYPTED', className: 'bg-primary/20 text-primary' },
+    ],
+    description:
+      'Protocole de sauvegarde redondant et infrastructure cloud hybride. Garantit l’intégrité des données via une architecture multi-tenant sécurisée.',
+    tags: ['Data Security', 'AWS_Edge', 'Rust_Backend'],
+    status: { label: 'SECURE_UPLINK', color: 'text-primary', dot: 'bg-primary' },
+    link: { label: 'ACCESS_PROTOCOL', decoration: 'decoration-tertiary' },
   },
 ];
 
 export default function Portfolio() {
-  const [scrollY, setScrollY] = useState(0);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [sectionTop, setSectionTop] = useState(0);
-
-  useEffect(() => {
-    if (sectionRef.current) {
-      setSectionTop(sectionRef.current.offsetTop);
-    }
-
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const relativeScroll = scrollY - sectionTop + window.innerHeight;
-
   return (
-    <section ref={sectionRef} className="relative py-32 bg-gradient-to-b from-white via-slate-50 to-white overflow-hidden">
-      <div className="absolute inset-0 opacity-20">
-        <div
-          className="absolute top-0 left-0 w-full h-full"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(6, 182, 212, 0.15) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            transform: `translateY(${relativeScroll * -0.1}px)`,
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 container mx-auto px-4">
-        <div className="text-center mb-20">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <Sparkles className="w-8 h-8 text-cyan-600" />
-            <h2 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-              Réalisations
+    <section id="work" className="relative flex w-full flex-col data-grid-overlay">
+      <div className="px-8 md:px-12 lg:px-24 py-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="font-headline text-2xl font-bold uppercase tracking-widest text-on-surface flex items-center gap-4">
+              NODES_DÉPLOYÉS
+              <span className="h-px w-48 bg-outline-variant/30 hidden sm:block" />
             </h2>
-            <Sparkles className="w-8 h-8 text-blue-600" />
+            <span className="font-label text-[10px] uppercase text-tertiary hidden md:block">
+              FILTER: ALL_CATEGORIES
+            </span>
           </div>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Quelques projets qui illustrent notre expertise et notre engagement envers l'excellence
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => {
-            const cardOffset = (relativeScroll - index * 200) * 0.08;
-            const isVisible = relativeScroll > index * 100;
-
-            return (
-              <div
-                key={index}
-                className="group relative"
-                style={{
-                  transform: `translateY(${Math.max(-cardOffset, -30)}px) rotateX(${Math.max(-cardOffset * 0.5, -5)}deg)`,
-                  opacity: isVisible ? 1 : 0,
-                  transition: 'opacity 0.5s ease-out',
-                  transformStyle: 'preserve-3d',
-                  perspective: '1000px',
-                }}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            {projects.map((project) => (
+              <article
+                key={project.title}
+                className="group relative flex flex-col bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 transition-all duration-500 overflow-hidden"
               >
-                <div className={`absolute -inset-1 bg-gradient-to-r ${project.gradient} opacity-0 group-hover:opacity-75 blur-xl transition-all duration-500 rounded-2xl`} />
+                <div className="aspect-video relative overflow-hidden">
+                  <img
+                    alt={project.title}
+                    src={project.image}
+                    className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent" />
+                  <div className="absolute top-4 left-4 flex gap-2">
+                    {project.badges.map((badge) => (
+                      <span
+                        key={badge.label}
+                        className={`px-2 py-1 text-[8px] font-label tracking-widest uppercase ${badge.className}`}
+                      >
+                        {badge.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-                <div className="relative h-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-lg group-hover:shadow-2xl group-hover:border-transparent transition-all duration-500">
-                  <div className={`h-2 bg-gradient-to-r ${project.gradient}`} />
-
-                  <div className="p-8">
-                    <div className="inline-block px-4 py-1 bg-cyan-100 border border-cyan-300 rounded-full text-sm text-cyan-700 mb-4">
-                      {project.category}
-                    </div>
-
-                    <h3 className="text-2xl font-bold text-slate-800 mb-4 group-hover:text-cyan-600 transition-colors duration-300">
+                <div className="p-8 flex-1 flex flex-col">
+                  <div className="flex justify-between items-start mb-6 gap-4">
+                    <h3
+                      className={`font-headline text-3xl md:text-4xl font-bold uppercase tracking-tighter ${project.titleColor}`}
+                    >
                       {project.title}
                     </h3>
-
-                    <p className="text-slate-600 mb-6 leading-relaxed">
-                      {project.description}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {project.tags.map((tag, tagIndex) => (
+                    <span className="font-label text-[10px] text-on-surface-variant/40 shrink-0">
+                      TIMESTAMP // {project.timestamp}
+                    </span>
+                  </div>
+                  <p className="font-body text-sm text-on-surface-variant leading-relaxed mb-8">
+                    {project.description}
+                  </p>
+                  <div className="mt-auto space-y-4">
+                    <div className="flex flex-wrap gap-3">
+                      {project.tags.map((tag) => (
                         <span
-                          key={tagIndex}
-                          className="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-lg border border-slate-300 group-hover:border-cyan-400 transition-colors duration-300"
+                          key={tag}
+                          className="px-3 py-1 bg-surface-container border border-outline-variant/20 text-[10px] font-label uppercase"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
-
-                    <div className="flex items-center text-cyan-600 group-hover:text-cyan-700 transition-colors duration-300">
-                      <span className="text-sm font-semibold mr-2">Voir le projet</span>
-                      <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                    <div className="flex justify-between items-center pt-6 border-t border-outline-variant/10">
+                      <span
+                        className={`text-[10px] font-label uppercase flex items-center gap-2 ${project.status.color}`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${project.status.dot}`} />
+                        {project.status.label}
+                      </span>
+                      <a
+                        href="#contact"
+                        className={`font-label text-[10px] text-on-surface uppercase underline ${project.link.decoration} decoration-2 underline-offset-4 hover:text-tertiary transition-colors cursor-pointer`}
+                      >
+                        {project.link.label}
+                      </a>
                     </div>
                   </div>
-
-                  <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500 pointer-events-none`} />
                 </div>
-              </div>
-            );
-          })}
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-20 p-12 bg-surface-container relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10 font-mono text-[10px] text-tertiary leading-relaxed break-all p-4 pointer-events-none select-none">
+              01011001 01001111 01010101 00100000 01000001 01010010 01000101 00100000 01001000
+              01000101 01010010 01000101
+            </div>
+            <div className="relative z-10 max-w-3xl">
+              <h4 className="font-headline text-sm tracking-widest uppercase text-tertiary mb-6">
+                IT_CONSULTING
+              </h4>
+              <p className="font-body text-lg md:text-xl text-on-surface leading-relaxed">
+                “L&apos;ingénierie logicielle ne consiste pas seulement à écrire du code, mais à
+                concevoir des systèmes résilients qui survivent aux environnements de production les
+                plus hostiles.”
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

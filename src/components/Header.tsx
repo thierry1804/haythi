@@ -1,90 +1,117 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+const navItems = [
+  { label: 'FLUX', href: '#home' },
+  { label: 'SERVICES', href: '#services' },
+  { label: 'CONSULTING', href: '#process' },
+  { label: 'PROJETS', href: '#work' },
+  { label: 'TERMINAL', href: '#contact' },
+];
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [active, setActive] = useState('#home');
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [lang, setLang] = useState<'FR' | 'EN'>('FR');
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+    const onScroll = () => {
+      const ids = ['home', 'services', 'process', 'work', 'contact'];
+      for (const id of [...ids].reverse()) {
+        const el = document.getElementById(id);
+        if (el && window.scrollY + 120 >= el.offsetTop) {
+          setActive(`#${id}`);
+          break;
+        }
+      }
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navItems = [
-    { label: 'Accueil', href: '#home' },
-    { label: 'Services', href: '#services' },
-    { label: 'À Propos', href: '#about' },
-    { label: 'Réalisations', href: '#portfolio' },
-    { label: 'Contact', href: '#contact' },
-  ];
-
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? 'bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-lg'
-          : 'bg-transparent'
-      }`}
-    >
-      <nav className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <a href="#home" className="flex items-center gap-2 group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
-              <Zap className="relative w-8 h-8 text-cyan-600 group-hover:text-cyan-500 transition-colors duration-300" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-              HayThi
-            </span>
-          </a>
+    <header className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-tertiary/10 ambient-shadow">
+      <div className="flex justify-between items-center px-6 md:px-12 h-20">
+        <a href="#home" className="flex items-center gap-3 group">
+          <img
+            src="/mark-light.webp"
+            alt="HAYTHI.MG"
+            className="h-9 w-auto md:h-10 object-contain drop-shadow-[0_0_12px_rgba(255,180,167,0.35)] group-hover:opacity-90 transition-opacity"
+          />
+          <span className="hidden sm:block font-headline text-sm md:text-base font-bold tracking-[0.22em] text-on-surface uppercase">
+            HAYTHI
+          </span>
+        </a>
 
-          <div className="hidden md:flex items-center gap-8">
-            {navItems.map((item, index) => (
-              <a
-                key={index}
-                href={item.href}
-                className="relative text-slate-600 hover:text-cyan-600 transition-colors duration-300 group"
-              >
-                {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 group-hover:w-full transition-all duration-300" />
-              </a>
-            ))}
-          </div>
+        <nav className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className={`font-headline uppercase tracking-widest text-xs transition-colors ${
+                active === item.href
+                  ? 'text-tertiary border-b border-tertiary pb-1'
+                  : 'text-white/40 hover:text-white'
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
 
-          <button className="hidden md:block px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
-            Démarrer un projet
-          </button>
-
+        <div className="flex items-center gap-2 md:gap-4">
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-slate-600 hover:text-cyan-600 transition-colors duration-300"
+            type="button"
+            aria-label="Toggle language"
+            onClick={() => setLang((l) => (l === 'FR' ? 'EN' : 'FR'))}
+            className="text-white/40 hover:text-tertiary hover:bg-tertiary/10 p-2 transition-all font-headline text-[10px] tracking-widest uppercase"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {lang}
+          </button>
+          <a
+            aria-label="Aller à la section contact"
+            href="#contact"
+            className="hidden md:flex text-tertiary hover:bg-surface-container-high p-2 transition-all"
+          >
+            <span className="material-symbols-outlined text-xl">terminal</span>
+          </a>
+          <a
+            href="#contact"
+            className="hidden sm:inline-flex px-4 py-2 bg-primary-container text-white font-headline text-[10px] tracking-widest uppercase hover:brightness-110 transition-all"
+          >
+            CONNECT
+          </a>
+          <button
+            type="button"
+            className="md:hidden text-on-surface p-2"
+            aria-label="Menu"
+            onClick={() => setMobileOpen((o) => !o)}
+          >
+            <span className="material-symbols-outlined">{mobileOpen ? 'close' : 'menu'}</span>
           </button>
         </div>
+      </div>
 
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 py-4 space-y-4 border-t border-slate-200">
-            {navItems.map((item, index) => (
-              <a
-                key={index}
-                href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-slate-600 hover:text-cyan-600 transition-colors duration-300 py-2"
-              >
-                {item.label}
-              </a>
-            ))}
-            <button className="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold text-white hover:shadow-lg transition-all duration-300">
-              Démarrer un projet
-            </button>
-          </div>
-        )}
-      </nav>
+      {mobileOpen && (
+        <div className="md:hidden border-t border-tertiary/10 px-6 py-4 space-y-3 bg-surface">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className="block font-headline uppercase tracking-widest text-xs text-white/60 hover:text-tertiary py-2"
+            >
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={() => setMobileOpen(false)}
+            className="inline-flex px-4 py-2 bg-primary-container text-white font-headline text-[10px] tracking-widest uppercase"
+          >
+            CONNECT
+          </a>
+        </div>
+      )}
     </header>
   );
 }

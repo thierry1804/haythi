@@ -1,80 +1,64 @@
-import { useEffect, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-
 export default function Hero() {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const parallaxOffset = scrollY * 0.5;
-  const opacity = Math.max(1 - scrollY / 600, 0);
-  const scale = Math.max(1 - scrollY / 2000, 0.8);
-
   return (
-    <section className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
+    <section
+      id="home"
+      className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden bg-surface"
+    >
       <div
-        className="absolute inset-0 opacity-20"
-        style={{ transform: `translateY(${parallaxOffset}px)` }}
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e1_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-      </div>
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0, 218, 243, 0.07), transparent 70%), radial-gradient(ellipse 40% 35% at 80% 20%, rgba(255, 180, 167, 0.05), transparent 60%)',
+        }}
+      />
 
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-400/30 rounded-full blur-3xl animate-pulse"
-           style={{ transform: `translate(${scrollY * 0.3}px, ${scrollY * 0.2}px)` }} />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400/30 rounded-full blur-3xl animate-pulse delay-1000"
-           style={{ transform: `translate(${-scrollY * 0.2}px, ${scrollY * 0.3}px)` }} />
+      <div className="relative z-10 px-8 md:px-12 lg:px-24 pt-28 pb-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="inline-flex items-center border border-tertiary/60 px-3 py-1.5 mb-8">
+            <span className="font-label text-tertiary text-[10px] uppercase tracking-[0.25em]">
+              PROTOCOL_01: SERVICES
+            </span>
+          </div>
 
-      <div
-        className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4"
-        style={{ opacity, transform: `scale(${scale})` }}
-      >
-        <div className="mb-8 relative">
-          <div className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 to-blue-500 opacity-20" />
-          <h1 className="relative text-7xl md:text-9xl font-bold bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent animate-gradient">
-            HayThi
+          <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.95] mb-8 max-w-5xl">
+            <span className="text-on-surface">EXPERTISE IT &amp;</span>
+            <br />
+            <span className="bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent">
+              CONSULTING
+            </span>
           </h1>
-        </div>
 
-        <p className="text-xl md:text-3xl text-slate-700 mb-4 max-w-3xl font-semibold">
-          Consultance en Systèmes d'Information
-        </p>
-        <p className="text-lg md:text-2xl text-slate-600 mb-12 max-w-2xl">
-          & Développement Web Innovant
-        </p>
+          <p className="font-body text-on-surface-variant text-sm md:text-base max-w-2xl leading-relaxed mb-10">
+            Consultant IT Freelance | 15+ ans d&apos;expérience. Solutions d&apos;ingénierie logicielle
+            de haute précision. Nous transformons des concepts complexes en infrastructures numériques
+            résilientes et performantes.
+          </p>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-[0_10px_40px_rgba(6,182,212,0.3)]">
-            <span className="relative z-10">Découvrir nos services</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </button>
-
-          <button className="px-8 py-4 border-2 border-cyan-600 rounded-lg font-semibold text-cyan-700 hover:bg-cyan-50 transition-all duration-300 hover:shadow-lg">
-            Nous contacter
-          </button>
-        </div>
-
-        <div className="absolute bottom-10 animate-bounce">
-          <ChevronDown className="w-8 h-8 text-cyan-600" />
+          <div className="flex flex-col sm:flex-row gap-4 mb-16">
+            <a
+              href="#services"
+              className="inline-flex items-center justify-center px-6 py-3.5 bg-tertiary text-on-tertiary font-headline text-xs font-bold uppercase tracking-widest hover:bg-tertiary-fixed transition-colors"
+            >
+              DÉCOUVRIR MES SERVICES
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center justify-center px-6 py-3.5 border border-primary text-tertiary font-headline text-xs font-bold uppercase tracking-widest hover:bg-primary/5 transition-colors"
+            >
+              PRENDRE RDV
+            </a>
+          </div>
         </div>
       </div>
 
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-cyan-500 rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 10}s`,
-            }}
-          />
-        ))}
+      <div className="absolute bottom-8 right-8 md:right-12 hidden sm:block font-mono text-[10px] text-white/30 space-y-1 text-right">
+        <p>LATENCY: 14MS</p>
+        <p>THROUGHPUT: 1.2GB/S</p>
+        <p>ENCRYPTION: AES-256-GCM</p>
+        <p>
+          SYS_STABILITY: <span className="text-tertiary">99.99%</span>
+        </p>
       </div>
     </section>
   );

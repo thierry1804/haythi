@@ -1,31 +1,25 @@
 import Header from './components/Header';
 import Hero from './components/Hero';
+import Stats from './components/Stats';
 import Services from './components/Services';
-import About from './components/About';
+import TechMarquee from './components/TechMarquee';
+import Process from './components/Process';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="bg-white">
+    <div className="min-h-screen bg-surface text-on-surface">
       <Header />
       <main>
-        <section id="home">
-          <Hero />
-        </section>
-        <section id="services">
-          <Services />
-        </section>
-        <section id="about">
-          <About />
-        </section>
-        <section id="portfolio">
-          <Portfolio />
-        </section>
-        <section id="contact">
-          <Contact />
-        </section>
+        <Hero />
+        <Stats />
+        <Services />
+        <TechMarquee />
+        <Process />
+        <Portfolio />
+        <Contact />
       </main>
       <Footer />
     </div>

@@ -1,118 +1,112 @@
-import { useEffect, useRef, useState } from 'react';
-import { Code2, Database, Globe, Zap, Shield, Cpu } from 'lucide-react';
-
-const services = [
-  {
-    icon: Database,
-    title: 'Consultance SI',
-    description: 'Optimisation et transformation de vos systèmes d\'information pour une performance maximale',
-    color: 'from-cyan-500 to-blue-600',
-  },
-  {
-    icon: Code2,
-    title: 'Développement Web',
-    description: 'Applications web modernes et performantes avec les dernières technologies',
-    color: 'from-blue-500 to-indigo-600',
-  },
-  {
-    icon: Globe,
-    title: 'Architecture Cloud',
-    description: 'Conception et déploiement d\'infrastructures cloud scalables et sécurisées',
-    color: 'from-indigo-500 to-blue-600',
-  },
-  {
-    icon: Zap,
-    title: 'Performance',
-    description: 'Audit et optimisation des performances de vos applications et systèmes',
-    color: 'from-cyan-400 to-teal-500',
-  },
-  {
-    icon: Shield,
-    title: 'Cybersécurité',
-    description: 'Protection et sécurisation de vos données et infrastructures',
-    color: 'from-blue-600 to-indigo-600',
-  },
-  {
-    icon: Cpu,
-    title: 'IA & Innovation',
-    description: 'Intégration de solutions d\'intelligence artificielle pour automatiser vos processus',
-    color: 'from-indigo-500 to-slate-600',
-  },
-];
-
 export default function Services() {
-  const [scrollY, setScrollY] = useState(0);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [sectionTop, setSectionTop] = useState(0);
-
-  useEffect(() => {
-    if (sectionRef.current) {
-      setSectionTop(sectionRef.current.offsetTop);
-    }
-
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const relativeScroll = scrollY - sectionTop + window.innerHeight;
-  const parallaxOffset = relativeScroll * 0.3;
-
   return (
-    <section ref={sectionRef} className="relative py-32 bg-gradient-to-b from-white via-slate-50 to-white overflow-hidden">
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{ transform: `translateY(${-parallaxOffset}px)` }}
-      >
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-cyan-300 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-300 rounded-full blur-3xl" />
-      </div>
+    <section id="services" className="relative flex w-full flex-col py-24 data-grid-overlay">
+      <div className="px-8 md:px-12 lg:px-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col gap-4 max-w-2xl mb-16">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-px bg-tertiary" />
+              <span className="font-label text-tertiary text-[10px] uppercase tracking-[0.3em]">
+                PROTOCOL_02: EXPERTISE
+              </span>
+            </div>
+            <h2 className="font-headline tracking-tighter text-3xl md:text-5xl font-bold text-on-surface uppercase">
+              Services d&apos;excellence IT
+            </h2>
+          </div>
 
-      <div className="relative z-10 container mx-auto px-4">
-        <div className="text-center mb-20">
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-            Nos Services
-          </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Des solutions complètes pour accompagner votre transformation digitale
-          </p>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-low border border-outline-variant/5 p-8 transition-all hover:bg-surface-container">
+              <div className="flex justify-between items-start mb-12">
+                <span className="font-headline text-4xl font-bold text-tertiary/20">01</span>
+                <span className="material-symbols-outlined text-tertiary text-3xl">terminal</span>
+              </div>
+              <h3 className="font-headline text-xl md:text-2xl font-bold text-on-surface mb-4 uppercase tracking-tight">
+                DÉVELOPPEMENT WEB
+              </h3>
+              <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
+                Applications web sur mesure avec Symfony, PHP, CodeIgniter. 15 ans d&apos;expertise
+                en développement backend et frontend.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {['REACT.JS', 'NEXT.JS', 'SYMFONY', 'PHP'].map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 bg-surface-container-highest font-headline text-[9px] tracking-widest text-tertiary uppercase"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => {
-            const Icon = service.icon;
-            const cardParallax = (relativeScroll - index * 100) * 0.05;
-
-            return (
-              <div
-                key={index}
-                className="group relative"
-                style={{
-                  transform: `translateY(${Math.max(-cardParallax, -20)}px)`,
-                  transition: 'transform 0.1s ease-out',
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
-                     style={{ background: `linear-gradient(to right, ${service.color})` }} />
-
-                <div className="relative h-full p-8 bg-white backdrop-blur-sm border border-slate-200 rounded-xl hover:border-cyan-400 shadow-lg hover:shadow-2xl transition-all duration-500 hover:transform hover:scale-105">
-                  <div className={`inline-flex p-4 rounded-lg bg-gradient-to-r ${service.color} mb-6 group-hover:rotate-12 transition-transform duration-500`}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-slate-800 mb-4 group-hover:text-cyan-600 transition-colors duration-300">
-                    {service.title}
-                  </h3>
-
-                  <p className="text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
-                    {service.description}
-                  </p>
-
-                  <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 w-0 group-hover:w-full transition-all duration-500" />
+            <div className="md:col-span-4 group relative overflow-hidden bg-surface-container-low border border-outline-variant/5 p-8 transition-all hover:bg-surface-container flex flex-col">
+              <div className="flex justify-between items-start mb-12">
+                <span className="font-headline text-4xl font-bold text-primary/20">02</span>
+                <span className="material-symbols-outlined text-primary text-3xl">brush</span>
+              </div>
+              <h3 className="font-headline text-xl md:text-2xl font-bold text-on-surface mb-4 uppercase tracking-tight">
+                CONSEIL &amp; AUDIT
+              </h3>
+              <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
+                Audit qualité ISO 9001, optimisation des SI, conseil stratégique et opérationnel.
+              </p>
+              <div className="border-t border-outline-variant/10 pt-6 mt-auto">
+                <div className="flex items-center text-[10px] font-headline tracking-widest text-primary">
+                  <span className="mr-2">PROTOCOL_AUDIT_READY</span>
+                  <span className="material-symbols-outlined text-xs">check_circle</span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+
+            <div className="md:col-span-4 group relative overflow-hidden bg-surface-container-low border border-outline-variant/5 p-8 transition-all hover:bg-surface-container flex flex-col">
+              <div className="flex justify-between items-start mb-12">
+                <span className="font-headline text-4xl font-bold text-tertiary/20">03</span>
+                <span className="material-symbols-outlined text-tertiary text-3xl">insights</span>
+              </div>
+              <h3 className="font-headline text-xl md:text-2xl font-bold text-on-surface mb-4 uppercase tracking-tight">
+                ARCHITECTURE SI
+              </h3>
+              <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
+                Conception et élaboration d&apos;architectures applicatives robustes, scalables et
+                sécurisées.
+              </p>
+              <div className="space-y-3 mt-auto">
+                <div className="w-full bg-surface-container-highest h-0.5">
+                  <div className="bg-tertiary h-full w-[92%]" />
+                </div>
+                <div className="flex justify-between font-mono text-[9px] text-white/30">
+                  <span>SYS_EFFICIENCY</span>
+                  <span>92%</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-low border border-outline-variant/5 p-8 transition-all hover:bg-surface-container">
+              <div className="flex justify-between items-start mb-12">
+                <span className="font-headline text-4xl font-bold text-primary/20">04</span>
+                <span className="material-symbols-outlined text-primary text-3xl">security</span>
+              </div>
+              <h3 className="font-headline text-xl md:text-2xl font-bold text-on-surface mb-4 uppercase tracking-tight">
+                MANAGEMENT DE PROJETS IT
+              </h3>
+              <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
+                Gestion de projets IT de A à Z, coordination d&apos;équipes, méthodologies agiles
+                (Scrum Master certifié PMP).
+              </p>
+              <div className="grid grid-cols-2 gap-4 relative z-10">
+                {['AWS / AZURE / GCP', 'DOCKER / K8S', 'SCRUM / AGILE', 'PMP CERTIFIED'].map(
+                  (item) => (
+                    <div key={item} className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-primary" />
+                      <span className="font-mono text-[10px] text-white/40">{item}</span>
+                    </div>
+                  )
+                )}
+              </div>
+              <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
