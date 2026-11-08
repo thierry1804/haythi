@@ -1,6 +1,6 @@
 import argon2 from "argon2";
 import { createHmac, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import { parseCookie, stringifySetCookie } from "cookie";
+import { parse as parseCookie, serialize as serializeCookie } from "cookie";
 import * as OTPAuth from "otpauth";
 
 export const COOKIE_NAME = "haythi_admin";
@@ -24,8 +24,21 @@ export async function verifyPassword(hash, password) {
   }
 }
 
+/**
+ * Secret HMAC des sessions. Obligatoire en production (throw si absent).
+ * Hors production, une valeur de dev est utilisée.
+ */
+export function getSessionSecret() {
+  const secret = process.env.SESSION_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET is required when NODE_ENV=production");
+  }
+  return "haythi-dev-session-secret";
+}
+
 function hashToken(token) {
-  const key = process.env.SESSION_SECRET || "haythi-session";
+  const key = getSessionSecret();
   return createHmac("sha256", key).update(token).digest("hex");
 }
 
@@ -58,17 +71,24 @@ export function destroySession(db, token) {
   db.prepare("DELETE FROM sessions WHERE token_hash = ?").run(hashToken(token));
 }
 
-/** Set-Cookie header value for a session token. */
-export function sessionCookie(token, { maxAgeMs = SESSION_TTL_MS } = {}) {
-  return stringifySetCookie({
-    name: COOKIE_NAME,
-    value: token,
+/**
+ * Options du cookie de session. Secure par défaut : seul NODE_ENV=development
+ * (développement local en HTTP) le désactive. NODE_ENV absent, "test",
+ * "staging", etc. => Secure.
+ */
+export function sessionCookieOptions({ maxAgeMs = SESSION_TTL_MS } = {}) {
+  return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV !== "development",
     sameSite: "strict",
     path: "/",
     maxAge: Math.floor(maxAgeMs / 1000),
-  });
+  };
+}
+
+/** Set-Cookie header value for a session token. */
+export function sessionCookie(token, opts) {
+  return serializeCookie(COOKIE_NAME, token, sessionCookieOptions(opts));
 }
 
 /** Set-Cookie header value that clears the session cookie. */

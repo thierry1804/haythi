@@ -100,17 +100,57 @@ test("verifyTotp accepts current window", () => {
   assert.equal(auth.verifyTotp(secret, "abc"), false);
 });
 
-test("session cookie flags", () => {
-  const prev = process.env.NODE_ENV;
-  process.env.NODE_ENV = "production";
+function withEnv(vars, fn) {
+  const prev = {};
+  for (const k of Object.keys(vars)) prev[k] = process.env[k];
+  for (const [k, v] of Object.entries(vars)) {
+    if (v === undefined) delete process.env[k];
+    else process.env[k] = v;
+  }
   try {
+    return fn();
+  } finally {
+    for (const [k, v] of Object.entries(prev)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+}
+
+test("session cookie flags (production)", () => {
+  withEnv({ NODE_ENV: "production" }, () => {
     const c = auth.sessionCookie("tok");
     assert.match(c, /^haythi_admin=tok/);
     assert.match(c, /HttpOnly/);
     assert.match(c, /Secure/);
     assert.match(c, /SameSite=Strict/);
     assert.match(c, /Path=\//);
-  } finally {
-    process.env.NODE_ENV = prev;
+  });
+});
+
+test("cookie is Secure unless NODE_ENV=development", () => {
+  for (const env of [undefined, "", "test", "staging", "prod", "Production"]) {
+    withEnv({ NODE_ENV: env }, () => {
+      assert.equal(auth.sessionCookieOptions().secure, true, `NODE_ENV=${env}`);
+      assert.match(auth.sessionCookie("t"), /Secure/);
+    });
   }
+  withEnv({ NODE_ENV: "development" }, () => {
+    assert.equal(auth.sessionCookieOptions().secure, false);
+    assert.doesNotMatch(auth.sessionCookie("t"), /Secure/);
+  });
+});
+
+test("SESSION_SECRET is required in production", () => {
+  withEnv({ NODE_ENV: "production", SESSION_SECRET: undefined }, () => {
+    assert.throws(() => auth.getSessionSecret(), /SESSION_SECRET/);
+    assert.throws(() => auth.createSession(db, "u1"), /SESSION_SECRET/);
+  });
+  withEnv({ NODE_ENV: "production", SESSION_SECRET: "s3cret" }, () => {
+    assert.equal(auth.getSessionSecret(), "s3cret");
+    assert.ok(auth.createSession(db, "u1"));
+  });
+  withEnv({ NODE_ENV: "development", SESSION_SECRET: undefined }, () => {
+    assert.ok(auth.getSessionSecret());
+  });
 });

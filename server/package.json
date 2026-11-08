@@ -14,7 +14,7 @@
   "dependencies": {
     "argon2": "^0.45.2",
     "better-sqlite3": "^11.10.0",
-    "cookie": "^2.0.2",
+    "cookie": "0.7.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
