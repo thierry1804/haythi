@@ -20,6 +20,7 @@ import { randomBytes } from "node:crypto";
 import {
   addEvent,
   anonymizeLead,
+  countLeads,
   deleteLead,
   exportLead,
   getLead,
@@ -225,7 +226,8 @@ export function createAdminRouter({
       res.status(400).json({ error: "invalid_status" });
       return;
     }
-    res.json({ leads: listLeads(req.app.locals.db, { status }) });
+    const db = req.app.locals.db;
+    res.json({ leads: listLeads(db, { status }), total: countLeads(db, { status }) });
   });
 
   /** Charge le lead :id ou répond 404. */

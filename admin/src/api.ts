@@ -73,3 +73,34 @@ export const apiPost = <T>(path: string, body?: unknown) => request<T>('POST', p
 export const apiPatch = <T>(path: string, body?: unknown) => request<T>('PATCH', path, body);
 export const apiPut = <T>(path: string, body?: unknown) => request<T>('PUT', path, body);
 export const apiDelete = <T>(path: string) => request<T>('DELETE', path);
+
+/** Télécharge une réponse GET en fichier (GET : pas de CSRF requis, cookie de session envoyé). */
+export async function apiDownload(path: string, fallbackName: string): Promise<void> {
+  const res = await fetch(`${BASE}${path.startsWith('/') ? path : `/${path}`}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    let data: unknown = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+    throw new ApiError(res.status, data);
+  }
+  const disposition = res.headers.get('Content-Disposition') ?? '';
+  const match = /filename="?([^";]+)"?/i.exec(disposition);
+  const filename = match ? match[1] : fallbackName;
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}

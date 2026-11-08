@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { ApiError, apiDelete, apiGet, apiPatch, apiPost } from '../api';
+import { ApiError, apiDelete, apiDownload, apiGet, apiPatch, apiPost } from '../api';
 import { EVENT_LABELS, formatDate, STATUSES, statusLabel } from '../labels';
 import type { Lead, LeadEvent, LeadStatus } from '../labels';
 import { navigate } from '../router';
@@ -108,16 +108,7 @@ export default function LeadDetail({
 
   const exportLead = () =>
     run(async () => {
-      const data = await apiGet<unknown>(`/leads/${encodeURIComponent(id)}/export`);
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `lead-${id}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      await apiDownload(`/leads/${encodeURIComponent(id)}/export`, `lead-${id}.json`);
     });
 
   const anonymize = () =>

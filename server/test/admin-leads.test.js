@@ -135,6 +135,8 @@ test("GET leads lists and filters by status", async () => {
   const closed = await (await api("/leads?status=closed")).json();
   assert.ok(closed.leads.every((l) => l.status === "closed"));
   assert.ok(closed.leads.some((l) => l.id === b));
+  assert.equal(closed.total, closed.leads.length);
+  assert.ok(all.total >= all.leads.length);
   assert.ok(!closed.leads.some((l) => l.id === a));
 
   const bad = await api("/leads?status=bogus");

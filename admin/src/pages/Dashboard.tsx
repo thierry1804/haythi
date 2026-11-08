@@ -21,13 +21,13 @@ export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => vo
     Promise.all([
       apiGet<VisitStats>('/stats/visits?days=7'),
       apiGet<VisitStats>('/stats/visits?days=30'),
-      apiGet<{ leads: LeadSummary[] }>('/leads?status=new'),
+      apiGet<{ leads: LeadSummary[]; total?: number }>('/leads?status=new'),
     ])
       .then(([s7, s30, leads]) => {
         if (!alive) return;
         setStats7(s7);
         setStats30(s30);
-        setNewLeads(leads.leads.length);
+        setNewLeads(leads.total ?? leads.leads.length);
       })
       .catch((err) => {
         if (!alive) return;

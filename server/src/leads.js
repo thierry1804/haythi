@@ -98,6 +98,17 @@ export function listLeads(db, { status, limit = 500 } = {}) {
     .all(max);
 }
 
+/** Nombre exact de leads (filtre de statut optionnel), indépendant du plafond de listLeads. */
+export function countLeads(db, { status } = {}) {
+  if (status !== undefined && !LEAD_STATUS_SET.has(status)) {
+    throw new Error(`Invalid lead status: ${status}`);
+  }
+  const row = status
+    ? db.prepare("SELECT COUNT(*) AS n FROM leads WHERE status = ?").get(status)
+    : db.prepare("SELECT COUNT(*) AS n FROM leads").get();
+  return row.n;
+}
+
 /** Ajoute un événement à l'historique d'un lead. */
 export function addEvent(db, leadId, type, payload = {}) {
   const id = randomUUID();
