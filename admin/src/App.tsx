@@ -1,67 +1,67 @@
-import { useState, type FormEvent } from 'react';
-import { ApiError, apiPost } from './api';
+import { useCallback, useEffect, useState } from 'react';
+import { apiGet } from './api';
+import { useRoute } from './router';
+import Account from './pages/Account';
+import Dashboard from './pages/Dashboard';
+import LeadDetail from './pages/LeadDetail';
+import Leads from './pages/Leads';
+import Login from './pages/Login';
+
+type Session = { state: 'loading' } | { state: 'out' } | { state: 'in'; email: string };
 
 export default function App() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [totp, setTotp] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [session, setSession] = useState<Session>({ state: 'loading' });
+  const route = useRoute();
 
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
+  const refresh = useCallback(async () => {
     try {
-      await apiPost('/login', { email, password, totp });
-    } catch (err) {
-      setError(err instanceof ApiError ? 'Identifiants invalides' : 'Erreur réseau');
-    } finally {
-      setBusy(false);
+      const me = await apiGet<{ email: string }>('/me');
+      setSession({ state: 'in', email: me.email });
+    } catch {
+      setSession({ state: 'out' });
     }
-  }
+  }, []);
+
+  const signOut = useCallback(() => {
+    window.location.hash = '/';
+    setSession({ state: 'out' });
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  if (session.state === 'loading') return <p className="muted pad">Chargement…</p>;
+  if (session.state === 'out') return <Login onLoggedIn={() => void refresh()} />;
+
+  const active = route.name === 'lead' ? 'leads' : route.name;
 
   return (
-    <main className="login">
-      <form className="login-form" onSubmit={onSubmit}>
-        <h1>HAYTHI Admin</h1>
-        {error && <p className="error">{error}</p>}
-        <label className="field">
-          <span>E-mail</span>
-          <input
-            type="email"
-            autoComplete="username"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label className="field">
-          <span>Mot de passe</span>
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        <label className="field">
-          <span>Code TOTP</span>
-          <input
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={8}
-            value={totp}
-            onChange={(e) => setTotp(e.target.value)}
-            required
-          />
-        </label>
-        <button type="submit" disabled={busy}>
-          Se connecter
-        </button>
-      </form>
-    </main>
+    <div className="shell">
+      <nav className="sidebar" aria-label="Navigation">
+        <div className="brand">HAYTHI Admin</div>
+        <a href="#/" className={active === 'dashboard' ? 'active' : ''}>
+          Tableau de bord
+        </a>
+        <a href="#/leads" className={active === 'leads' ? 'active' : ''}>
+          Leads
+        </a>
+        <a href="#/account" className={active === 'account' ? 'active' : ''}>
+          Compte
+        </a>
+      </nav>
+      <main className="content">
+        {route.name === 'dashboard' && <Dashboard onUnauthorized={signOut} />}
+        {route.name === 'leads' && <Leads onUnauthorized={signOut} />}
+        {route.name === 'lead' && <LeadDetail key={route.id} id={route.id} onUnauthorized={signOut} />}
+        {route.name === 'account' && <Account email={session.email} onLoggedOut={signOut} />}
+        {route.name === 'notfound' && (
+          <>
+            <h1>Page introuvable</h1>
+            <a href="#/">Retour au tableau de bord</a>
+          </>
+        )}
+      </main>
+    </div>
   );
 }
