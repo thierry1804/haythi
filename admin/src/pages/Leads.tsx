@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ApiError, apiGet } from '../api';
-import { formatDate, STATUSES, statusLabel } from '../labels';
+import { formatDate, protocolLabel, STATUSES, statusLabel } from '../labels';
 import type { LeadSummary } from '../labels';
 
 export default function Leads({ onUnauthorized }: { onUnauthorized: () => void }) {
@@ -64,7 +64,7 @@ export default function Leads({ onUnauthorized }: { onUnauthorized: () => void }
                   </a>
                   {l.company && <div className="muted">{l.company}</div>}
                 </td>
-                <td>{l.subject}</td>
+                <td>{protocolLabel(l.subject)}</td>
                 <td className="nowrap">{statusLabel(l.status)}</td>
               </tr>
             ))}

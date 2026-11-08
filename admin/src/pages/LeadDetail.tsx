@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { ApiError, apiDelete, apiDownload, apiGet, apiPatch, apiPost } from '../api';
-import { EVENT_LABELS, formatDate, STATUSES, statusLabel } from '../labels';
+import { defaultReplySubject, EVENT_LABELS, formatDate, protocolLabel, STATUSES, statusLabel } from '../labels';
 import type { Lead, LeadEvent, LeadStatus } from '../labels';
 import { navigate } from '../router';
 
@@ -58,7 +58,7 @@ export default function LeadDetail({
       const r = await apiGet<{ lead: Lead; events: LeadEvent[] }>(`/leads/${encodeURIComponent(id)}`);
       setLead(r.lead);
       setEvents(r.events);
-      setSubject((s) => s || (r.lead.subject ? `Re: ${r.lead.subject}` : ''));
+      setSubject((s) => s || defaultReplySubject(r.lead.subject));
       setLoadError(null);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) onUnauthorized();
@@ -193,7 +193,7 @@ export default function LeadDetail({
         <dt>Langue</dt>
         <dd>{lead.lang}</dd>
         <dt>Sujet</dt>
-        <dd>{lead.subject}</dd>
+        <dd>{protocolLabel(lead.subject)}</dd>
         <dt>Message</dt>
         <dd className="message">{lead.message || '—'}</dd>
       </dl>

@@ -14,8 +14,9 @@
 # (haythi_admin : HttpOnly, Secure, SameSite=Strict).
 #
 # Protection d'accès : Cloudflare Access (allowlist email) devant ce hostname.
-# Le vhost ne doit pas être joignable en direct hors Cloudflare si possible
-# (pare-feu : n'autoriser 443 que depuis les plages IP Cloudflare).
+# OBLIGATOIRE : le vhost ne doit pas être joignable en direct hors Cloudflare
+# (pare-feu : n'autoriser 443 que depuis les plages IP Cloudflare ; voir
+# docs/backoffice-deploy.md, étape 6, avec la commande de vérification).
 
 <VirtualHost *:80>
     ServerName admin.haythi.mg

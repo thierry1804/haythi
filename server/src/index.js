@@ -9,8 +9,8 @@ import { z } from 'zod';
 import { buildAckEmail } from './ackEmail.js';
 import { createAdminRouter } from './adminRoutes.js';
 import { getSessionSecret } from './auth.js';
-import { createHash } from 'node:crypto';
 import { openDb } from './db.js';
+import { PROTOCOLS } from './protocols.js';
 import { contactRejectReason, createLead, setLeadEmailStatus } from './leads.js';
 import { createQuotaStore } from './quota.js';
 import { createBeaconHandler } from './visits.js';
@@ -47,14 +47,6 @@ if (NODE_ENV !== 'production') {
   ALLOWED_ORIGINS.push('http://localhost:5173', 'http://127.0.0.1:5173');
 }
 
-const PROTOCOLS = {
-  'web-dev': 'Développement Web',
-  architecture: 'Architecture SI',
-  management: 'Management project',
-  consulting: 'Conseil',
-  training: 'Formation',
-};
-
 const contactSchema = z.object({
   name: z.string().trim().min(1).max(120),
   company: z.string().trim().max(160).optional().default(''),
@@ -68,10 +60,6 @@ const contactSchema = z.object({
 });
 
 const db = openDb(DATABASE_PATH);
-
-function hashIp(ip) {
-  return ip ? createHash('sha256').update(ip).digest('hex') : null;
-}
 
 const quota = createQuotaStore({
   filePath: path.join(process.cwd(), 'data', 'quota.json'),
@@ -323,7 +311,6 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
         subject: data.subject,
         message,
         lang: data.lang || 'FR',
-        ipHash: hashIp(ip),
       }));
     } catch (dbErr) {
       console.error('[haythi-api] lead insert fail', dbErr?.message || dbErr);

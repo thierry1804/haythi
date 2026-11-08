@@ -90,7 +90,6 @@ function makeLead(over = {}) {
     subject: "web-dev",
     message: "Bonjour, je souhaite un site vitrine.",
     lang: "FR",
-    ipHash: "abc123",
     ...over,
   });
   return id;
@@ -206,6 +205,8 @@ test("reply sends via Resend (To lead, From RESEND_FROM, Reply-To + Cc) and stor
   assert.deepEqual(sent[0].cc, ["contact@haythi.mg"]);
   assert.equal(sent[0].subject, "Re: votre projet");
   assert.match(sent[0].text, /Merci pour votre message/);
+  assert.match(sent[0].html, /Merci pour votre message/);
+  assert.match(sent[0].html, /<br>/);
 
   const events = db
     .prepare("SELECT * FROM lead_events WHERE lead_id = ? AND type = 'reply'")
@@ -215,6 +216,23 @@ test("reply sends via Resend (To lead, From RESEND_FROM, Reply-To + Cc) and stor
   assert.equal(payload.subject, "Re: votre projet");
   assert.match(payload.text, /Merci/);
   assert.equal(getLead(db, id).status, "replied");
+});
+
+test("reply: raw subject key becomes Re: [HAYTHI] <label>; html is escaped", async () => {
+  const id = makeLead({ subject: "architecture" });
+  sent = [];
+  sendImpl = async () => ({ data: { id: "em_2" }, error: null });
+  const res = await api(`/leads/${id}/reply`, {
+    method: "POST",
+    body: { subject: "Re: architecture", text: "<script>alert(1)</script> & merci" },
+  });
+  assert.equal(res.status, 200);
+  assert.equal(sent[0].subject, "Re: [HAYTHI] Architecture SI");
+  assert.match(sent[0].text, /<script>/);
+  assert.doesNotMatch(sent[0].html, /<script>/);
+  assert.match(sent[0].html, /&lt;script&gt;.*&amp; merci/);
+  const ev = db.prepare("SELECT payload_json FROM lead_events WHERE lead_id = ? AND type = 'reply'").get(id);
+  assert.equal(JSON.parse(ev.payload_json).subject, "Re: [HAYTHI] Architecture SI");
 });
 
 test("reply: upstream failure → 502, no event, status unchanged", async () => {

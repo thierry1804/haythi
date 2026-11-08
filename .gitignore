@@ -25,3 +25,7 @@ server/.env
 docs/RESEND-CLOUDFLARE-SETUP.md
 public/api/config.local.php
 dist/api/config.local.php
+.superpowers/
+server/data/
+*.sqlite
+*.sqlite-*

@@ -10,6 +10,22 @@ export const STATUS_LABELS: Record<LeadStatus, string> = {
   spam: 'Spam',
 };
 
+export const PROTOCOL_LABELS: Record<string, string> = {
+  'web-dev': 'Développement Web',
+  architecture: 'Architecture SI',
+  management: 'Management project',
+  consulting: 'Conseil',
+  training: 'Formation',
+};
+
+export function protocolLabel(key: string): string {
+  return PROTOCOL_LABELS[key] ?? key;
+}
+
+export function defaultReplySubject(key: string): string {
+  return key ? `Re: [HAYTHI] ${protocolLabel(key)}` : '';
+}
+
 export const EVENT_LABELS: Record<string, string> = {
   status: 'Changement de statut',
   reply: 'Réponse envoyée',

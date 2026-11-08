@@ -92,12 +92,14 @@ cd /opt/haythi-api
 sudo -u www-data node scripts/create-admin.js operateur@example.com 'MOT_DE_PASSE_LONG'
 ```
 
+**Rotation (v1)** : la page Compte de l'UI ne propose volontairement que la déconnexion. Changer le mot de passe ou le secret TOTP se fait en relançant `create-admin.js` (même commande, même email) : cela remplace le hash du mot de passe **et** le secret TOTP, et supprime toutes les sessions. Rescanner le nouvel `otpauth://`.
+
 Le script lit `/opt/haythi-api/.env` (donc `DATABASE_PATH`) via dotenv : lancer depuis `/opt/haythi-api`, avec le même utilisateur que le service pour que la base reste lisible par `www-data`.
 
 - [ ] Scanner immédiatement l'URL `otpauth://` affichée dans une application TOTP : elle n'est **pas réaffichée**. Relancer la commande régénère mot de passe et secret TOTP, et invalide les sessions.
 - [ ] Effacer l'historique shell si le mot de passe y figure : `history -d $(history 1 | awk '{print $1}')`.
 
-### 4. Conteneur UI (Docker, port 8090)
+### 4. Conteneur UI (Docker, port 8090 hôte)
 
 `admin/` n'est pas dans `/opt/haythi-api` : le copier d'abord depuis le poste de dev, à la racine du dépôt :
 
@@ -115,7 +117,7 @@ docker compose ps
 curl -sI http://127.0.0.1:8090/ | head -5
 ```
 
-Le compose publie `127.0.0.1:8090:80` : le conteneur n'est joignable que via Apache. L'image ne contient aucun secret.
+Le compose publie `127.0.0.1:8090:8080` (hôte `8090` -> conteneur `8080`) : le conteneur n'est joignable que via Apache. L'image est `nginxinc/nginx-unprivileged` (nginx non-root, écoute sur 8080) et ne contient aucun secret.
 
 ### 5. DNS
 
@@ -125,7 +127,25 @@ Le compose publie `127.0.0.1:8090:80` : le conteneur n'est joignable que via Apa
 
 - [ ] Zero Trust > Access > Applications > Self-hosted, domaine `admin.haythi.mg`.
 - [ ] Politique **Allow** avec une seule règle : *Emails* = email de l'opérateur (allowlist), aucune autre règle, pas de « Everyone ».
-- [ ] Idéal : pare-feu du VPS limitant 443 aux plages IP Cloudflare, pour ne pas contourner Access en tapant l'origine directement.
+- [ ] **Obligatoire** : restreindre `admin.haythi.mg:443` aux plages IP Cloudflare (pare-feu hôte ou pare-feu du fournisseur). Sans cela, quiconque connaît l'IP du VPS contourne Cloudflare Access en appelant l'origine directement (l'API admin n'est alors protégée que par mot de passe + TOTP). Ne pas ouvrir 443 à `0.0.0.0/0` pour ce vhost.
+
+Exemple avec `ufw` (plages à jour : <https://www.cloudflare.com/ips-v4> et `/ips-v6`). Si le même VPS sert aussi `haythi.mg` en 443 derrière Cloudflare, la règle s'applique à tout le port 443 (le site public est lui aussi proxifié) :
+
+```bash
+sudo ufw delete allow 443/tcp 2>/dev/null || true
+for ip in $(curl -fsS https://www.cloudflare.com/ips-v4 https://www.cloudflare.com/ips-v6); do
+  sudo ufw allow proto tcp from "$ip" to any port 443 comment 'cloudflare'
+done
+sudo ufw status numbered
+```
+
+Vérifier (depuis une machine **hors** Cloudflare, par exemple le poste de dev) que l'origine directe est bloquée : la commande doit expirer ou être refusée, jamais renvoyer un certificat ni une page.
+
+```bash
+curl -skI --connect-timeout 5 --resolve admin.haythi.mg:443:<ip-vps> https://admin.haythi.mg/ ; echo "exit=$?"
+```
+
+Attendu : `exit=28` (timeout) ou `exit=7` (refusé), aucune ligne `HTTP/`. Par Cloudflare (`curl -sI https://admin.haythi.mg/`), la réponse doit toujours être la redirection Access (étape 9). Les plages Cloudflare changent rarement : revérifier la liste à chaque revue de sécurité.
 
 ### 7. Privacy et front (déjà dans le code)
 

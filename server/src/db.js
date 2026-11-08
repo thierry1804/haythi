@@ -61,6 +61,7 @@ export function openDb(filePath) {
   const db = new Database(filePath);
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
+  db.pragma("secure_delete = ON");
   db.exec(MIGRATIONS_SQL);
   return db;
 }

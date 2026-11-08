@@ -49,12 +49,13 @@ export function shouldPersistContact(data, opts) {
   return contactRejectReason(data, opts) === null;
 }
 
-export function createLead(db, { name, company, email, subject, message, lang, ipHash }) {
+/** L'IP du prospect n'est jamais stockée (ni en clair ni hachée) : ip_hash reste NULL. */
+export function createLead(db, { name, company, email, subject, message, lang }) {
   const id = randomUUID();
   db.prepare(
     `INSERT INTO leads (id, created_at, status, name, company, email, subject, message, lang, email_status, ip_hash)
-     VALUES (?, ?, 'new', ?, ?, ?, ?, ?, ?, NULL, ?)`,
-  ).run(id, new Date().toISOString(), name, company || "", email, subject, message, lang || "FR", ipHash ?? null);
+     VALUES (?, ?, 'new', ?, ?, ?, ?, ?, ?, NULL, NULL)`,
+  ).run(id, new Date().toISOString(), name, company || "", email, subject, message, lang || "FR");
   return { id };
 }
 

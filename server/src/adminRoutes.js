@@ -30,6 +30,7 @@ import {
   listLeads,
   updateStatus,
 } from "./leads.js";
+import { replySubject } from "./protocols.js";
 import { getVisitStats, VISIT_STATS_DAYS } from "./visits.js";
 
 export const CSRF_COOKIE = "haythi_csrf";
@@ -53,6 +54,21 @@ const replySchema = z.object({
 
 function stripControl(value) {
   return value.replace(/[\u0000-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** HTML minimal (texte échappé, retours à la ligne conservés) pour la réponse admin. */
+function replyHtml(text) {
+  const body = escapeHtml(text.replace(/\r\n?/g, "\n")).replace(/\n/g, "<br>\n");
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#111">${body}</div>`;
 }
 
 function newCsrfToken() {
@@ -271,12 +287,13 @@ export function createAdminRouter({
     "/leads/:id/reply",
     withLead(async (req, res, db, lead) => {
       const parsed = replySchema.safeParse(req.body);
-      const subject = parsed.success ? stripControl(parsed.data.subject) : "";
+      const rawSubject = parsed.success ? stripControl(parsed.data.subject) : "";
       const text = parsed.success ? parsed.data.text.trim() : "";
-      if (!parsed.success || !subject || !text) {
+      if (!parsed.success || !rawSubject || !text) {
         res.status(400).json({ error: "invalid_payload" });
         return;
       }
+      const subject = replySubject(rawSubject, lead.subject);
       if (isAnonymized(lead)) {
         res.status(409).json({ error: "anonymized" });
         return;
@@ -295,6 +312,7 @@ export function createAdminRouter({
           replyTo: resendTo,
           subject: subject.slice(0, 200),
           text,
+          html: replyHtml(text),
           tags: [{ name: "source", value: "admin-reply" }],
         });
       } catch (err) {

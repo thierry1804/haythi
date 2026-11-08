@@ -28,3 +28,13 @@ test("openDb creates leads table", async () => {
     db.close();
   }
 });
+
+test("openDb enables secure_delete", async () => {
+  const { openDb } = await import("../src/db.js");
+  const db = openDb(join(tempDir, "secure.sqlite"));
+  try {
+    assert.equal(db.pragma("secure_delete", { simple: true }), 1);
+  } finally {
+    db.close();
+  }
+});

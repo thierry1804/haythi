@@ -39,7 +39,7 @@ after(async () => {
 const count = () => db.prepare("SELECT COUNT(*) AS n FROM leads").get().n;
 
 test("createLead inserts status new", () => {
-  const { id } = createLead(db, { ...base, ipHash: "abc123" });
+  const { id } = createLead(db, { ...base });
   assert.ok(id);
   const lead = getLead(db, id);
   assert.equal(lead.status, "new");
@@ -47,7 +47,7 @@ test("createLead inserts status new", () => {
   assert.equal(lead.email, base.email);
   assert.equal(lead.subject, "web-dev");
   assert.equal(lead.lang, "FR");
-  assert.equal(lead.ip_hash, "abc123");
+  assert.equal(lead.ip_hash, null);
   assert.equal(lead.email_status, null);
   assert.ok(lead.created_at);
 });
@@ -57,7 +57,7 @@ test("getLead returns null when missing", () => {
 });
 
 test("setLeadEmailStatus updates email_status and keeps row", () => {
-  const { id } = createLead(db, { ...base, ipHash: "h" });
+  const { id } = createLead(db, { ...base });
   setLeadEmailStatus(db, id, "failed");
   assert.equal(getLead(db, id).email_status, "failed");
   setLeadEmailStatus(db, id, "sent");
@@ -67,7 +67,7 @@ test("setLeadEmailStatus updates email_status and keeps row", () => {
 });
 
 test("setLeadEmailStatus rejects invalid status", () => {
-  const { id } = createLead(db, { ...base, ipHash: "h" });
+  const { id } = createLead(db, { ...base });
   assert.throws(() => setLeadEmailStatus(db, id, "bogus"));
 });
 
