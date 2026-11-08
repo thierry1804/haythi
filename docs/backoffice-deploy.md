@@ -11,7 +11,24 @@ https://admin.haythi.mg    -> Cloudflare Access -> Apache
   /*                       -> 127.0.0.1:8090   (conteneur Docker UI)
 ```
 
-Snippets : `server/deploy/apache-admin.conf.snippet` (vhost admin), `server/deploy/apache-api-t.conf.snippet` (beacon public Apache), `server/deploy/nginx-api.conf.snippet` (équivalent Nginx, `/api/contact` + `/api/t`).
+## Où se trouvent les fichiers (dépôt vs VPS)
+
+Les commandes ci-dessous s'exécutent **sur le VPS**, où le dépôt n'est pas cloné. Le contenu de `server/` du dépôt est synchronisé dans `/opt/haythi-api` (script `server/deploy/remote-setup.sh`, ou rsync manuel), donc les snippets sont sur le VPS dans `/opt/haythi-api/deploy/`.
+
+| Dépôt (poste de dev) | VPS |
+|----------------------|-----|
+| `server/deploy/apache-admin.conf.snippet` | `/opt/haythi-api/deploy/apache-admin.conf.snippet` |
+| `server/deploy/apache-api-t.conf.snippet` | `/opt/haythi-api/deploy/apache-api-t.conf.snippet` |
+| `server/deploy/nginx-api.conf.snippet` | `/opt/haythi-api/deploy/nginx-api.conf.snippet` |
+| `server/scripts/create-admin.js` | `/opt/haythi-api/scripts/create-admin.js` |
+| `admin/` (UI Docker) | `/opt/haythi-admin/` (copié depuis le poste, voir étape 4) |
+
+Avant l'étape 2, vérifier que les snippets sont bien là : `ls /opt/haythi-api/deploy/`. Sinon, depuis le poste de dev, à la racine du dépôt :
+
+```bash
+rsync -a --exclude node_modules --exclude .env --exclude data server/ ubuntu@<ip-vps>:/tmp/haythi-api-upload/
+# puis sur le VPS : bash /tmp/haythi-api-upload/deploy/remote-setup.sh   (ou rsync -> /opt/haythi-api avec sudo)
+```
 
 ## Variables d'environnement (`/opt/haythi-api/.env`, `chmod 600`)
 
@@ -28,7 +45,7 @@ Le reste (`RESEND_*`, `ALLOWED_ORIGINS`, quotas) est inchangé : voir `server/.e
 
 ### 1. API (hôte, systemd)
 
-- [ ] Mettre à jour `/opt/haythi-api` (code `server/`), **sans écraser `.env` ni `data/`**. `server/deploy/remote-setup.sh` exclut les deux du `rsync --delete`.
+- [ ] Mettre à jour `/opt/haythi-api` (code `server/` du dépôt, snippets inclus dans `/opt/haythi-api/deploy/`), **sans écraser `.env` ni `data/`**. `remote-setup.sh` (`server/deploy/` dans le dépôt, `/opt/haythi-api/deploy/` sur le VPS) exclut les deux du `rsync --delete`.
 - [ ] Compléter `/opt/haythi-api/.env` avec `SESSION_SECRET`, `ADMIN_ORIGIN`, `DATABASE_PATH`.
 - [ ] Installer les dépendances (modules natifs `better-sqlite3` et `argon2`) :
 
@@ -59,7 +76,7 @@ Sauvegarde (manuelle, v1) : `sudo cp -a /opt/haythi-api/data /root/haythi-data-$
 
 ```bash
 sudo a2enmod proxy proxy_http headers ssl rewrite
-sudo cp server/deploy/apache-admin.conf.snippet /etc/apache2/sites-available/admin.haythi.mg.conf
+sudo cp /opt/haythi-api/deploy/apache-admin.conf.snippet /etc/apache2/sites-available/admin.haythi.mg.conf
 sudo a2ensite admin.haythi.mg
 sudo apache2ctl configtest && sudo systemctl reload apache2
 ```
@@ -82,8 +99,17 @@ Le script lit `/opt/haythi-api/.env` (donc `DATABASE_PATH`) via dotenv : lancer 
 
 ### 4. Conteneur UI (Docker, port 8090)
 
+`admin/` n'est pas dans `/opt/haythi-api` : le copier d'abord depuis le poste de dev, à la racine du dépôt :
+
 ```bash
-cd /opt/haythi-admin   # copie de admin/ (Dockerfile, nginx.conf, docker-compose.yml, sources)
+rsync -a --exclude node_modules --exclude dist admin/ ubuntu@<ip-vps>:/tmp/haythi-admin-upload/
+ssh ubuntu@<ip-vps> 'sudo mkdir -p /opt/haythi-admin && sudo rsync -a --delete /tmp/haythi-admin-upload/ /opt/haythi-admin/'
+```
+
+Puis sur le VPS :
+
+```bash
+cd /opt/haythi-admin
 docker compose up -d --build
 docker compose ps
 curl -sI http://127.0.0.1:8090/ | head -5
@@ -114,7 +140,7 @@ Tant que le proxy `/api/t` n'est pas activé (étape 8), le beacon reçoit un 40
 
 **Uniquement après l'étape 7** (privacy en ligne).
 
-- [ ] Apache : coller `server/deploy/apache-api-t.conf.snippet` dans le `<VirtualHost *:443>` de `haythi.mg`, à côté de `<Location "/api/contact">`. Nginx : bloc `location = /api/t` de `nginx-api.conf.snippet`.
+- [ ] Apache : coller le contenu de `/opt/haythi-api/deploy/apache-api-t.conf.snippet` dans le `<VirtualHost *:443>` de `haythi.mg` (fichier du site, souvent `/etc/apache2/sites-available/000-default-le-ssl.conf`), à côté de `<Location "/api/contact">`. Nginx : bloc `location = /api/t` de `/opt/haythi-api/deploy/nginx-api.conf.snippet`.
 
 ```bash
 sudo apache2ctl configtest && sudo systemctl reload apache2
