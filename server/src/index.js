@@ -13,6 +13,7 @@ import { createHash } from 'node:crypto';
 import { openDb } from './db.js';
 import { contactRejectReason, createLead, setLeadEmailStatus } from './leads.js';
 import { createQuotaStore } from './quota.js';
+import { createBeaconHandler } from './visits.js';
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOST = process.env.HOST || '127.0.0.1';
@@ -204,6 +205,16 @@ const contactLimiter = rateLimit({
   keyGenerator: (req) => clientIp(req) || req.ip || 'unknown',
 });
 
+// Beacon de visite : très limité par IP (1 hit de page ≈ quelques requêtes par minute).
+const beaconLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: 'RATE_LIMIT' },
+  keyGenerator: (req) => clientIp(req) || req.ip || 'unknown',
+});
+
 app.locals.db = db;
 
 let adminEnabled = true;
@@ -228,6 +239,15 @@ if (adminEnabled) {
 app.get('/healthz', (_req, res) => {
   res.status(200).json({ ok: true, quota: quota.snapshot() });
 });
+
+app.post(
+  '/api/t',
+  beaconLimiter,
+  createBeaconHandler({
+    ownHosts: ALLOWED_ORIGINS.map((o) => new URL(o).hostname),
+    isAllowed: originAllowed,
+  }),
+);
 
 app.post('/api/contact', contactLimiter, async (req, res) => {
   try {

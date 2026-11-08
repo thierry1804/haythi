@@ -29,6 +29,7 @@ import {
   listLeads,
   updateStatus,
 } from "./leads.js";
+import { getVisitStats, VISIT_STATS_DAYS } from "./visits.js";
 
 export const CSRF_COOKIE = "haythi_csrf";
 export const CSRF_HEADER = "x-csrf-token";
@@ -207,6 +208,15 @@ export function createAdminRouter({
       res.append("Set-Cookie", csrfCookie(newCsrfToken()));
     }
     res.json({ email: req.admin.email });
+  });
+
+  router.get("/stats/visits", (req, res) => {
+    const days = req.query.days === undefined ? 7 : Number(req.query.days);
+    if (!VISIT_STATS_DAYS.includes(days)) {
+      res.status(400).json({ error: "invalid_days" });
+      return;
+    }
+    res.json(getVisitStats(req.app.locals.db, days));
   });
 
   router.get("/leads", (req, res) => {
