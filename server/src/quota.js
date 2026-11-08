@@ -74,14 +74,22 @@ export function createQuotaStore(options = {}) {
     dailyLimit,
     monthlyLimit,
     /** @returns {{ ok: true } | { ok: false, error: string }} */
-    canSend({ email, ip, emailCooldownMs = 60 * 60 * 1000, ipHourMax = 3, ipDayMax = 8 }) {
+    canSend({
+      email,
+      ip,
+      units = 1,
+      emailCooldownMs = 60 * 60 * 1000,
+      ipHourMax = 3,
+      ipDayMax = 8,
+    }) {
       const state = load();
       pruneMaps(state);
+      const need = Math.max(1, Number(units) || 1);
 
-      if (state.dayCount >= dailyLimit) {
+      if (state.dayCount + need > dailyLimit) {
         return { ok: false, error: 'DAILY_QUOTA' };
       }
-      if (state.monthCount >= monthlyLimit) {
+      if (state.monthCount + need > monthlyLimit) {
         return { ok: false, error: 'MONTHLY_QUOTA' };
       }
 
@@ -103,11 +111,12 @@ export function createQuotaStore(options = {}) {
 
       return { ok: true };
     },
-    recordSend({ email, ip }) {
+    recordSend({ email, ip, units = 1 }) {
       const state = load();
       pruneMaps(state);
-      state.dayCount += 1;
-      state.monthCount += 1;
+      const add = Math.max(1, Number(units) || 1);
+      state.dayCount += add;
+      state.monthCount += add;
 
       const emailKey = (email || '').toLowerCase();
       if (emailKey) {

@@ -2,7 +2,7 @@ import { FormEvent, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
 
 export default function Contact() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const startedAtRef = useRef(Date.now());
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({
@@ -37,6 +37,7 @@ export default function Contact() {
           message: formData.message.trim(),
           website: formData.website,
           startedAt: startedAtRef.current,
+          lang,
         }),
       });
 

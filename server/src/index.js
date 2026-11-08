@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import path from 'node:path';
 import { Resend } from 'resend';
 import { z } from 'zod';
+import { buildAckEmail } from './ackEmail.js';
 import { createQuotaStore } from './quota.js';
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -22,8 +23,8 @@ const MAX_BODY_BYTES = 16 * 1024;
 const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 80);
 const MONTHLY_SEND_LIMIT = Number(process.env.MONTHLY_SEND_LIMIT || 2500);
 const EMAIL_COOLDOWN_MS = Number(process.env.EMAIL_COOLDOWN_MS || 60 * 60 * 1000);
-const IP_HOUR_MAX = Number(process.env.IP_HOUR_MAX || 3);
-const IP_DAY_MAX = Number(process.env.IP_DAY_MAX || 8);
+const IP_HOUR_MAX = Number(process.env.IP_HOUR_MAX || 10);
+const IP_DAY_MAX = Number(process.env.IP_DAY_MAX || 20);
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://haythi.mg,https://www.haythi.mg')
   .split(',')
@@ -51,6 +52,7 @@ const contactSchema = z.object({
   website: z.string().max(200).optional().default(''),
   startedAt: z.number().int().positive().optional(),
   turnstileToken: z.string().max(2048).optional().default(''),
+  lang: z.enum(['FR', 'EN']).optional().default('FR'),
 });
 
 const quota = createQuotaStore({
@@ -126,6 +128,17 @@ function originAllowed(req) {
   }
 }
 
+/** Vrai IP client derrière Cloudflare/Apache (pas l'IP edge CF). */
+function clientIp(req) {
+  const cf = (req.get('cf-connecting-ip') || '').trim();
+  if (cf) return cf;
+  const real = (req.get('x-real-ip') || '').trim();
+  if (real) return real;
+  const xff = (req.get('x-forwarded-for') || '').split(',')[0]?.trim();
+  if (xff) return xff;
+  return req.ip || '';
+}
+
 if (!RESEND_API_KEY.startsWith('re_')) {
   console.error('[haythi-api] RESEND_API_KEY manquante ou invalide');
   if (NODE_ENV === 'production') process.exit(1);
@@ -169,10 +182,11 @@ app.use(
 
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: { ok: false, error: 'RATE_LIMIT' },
+  keyGenerator: (req) => clientIp(req) || req.ip || 'unknown',
 });
 
 app.get('/healthz', (_req, res) => {
@@ -222,22 +236,33 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
-    const clientIp = req.ip || '';
-    const turnstileOk = await verifyTurnstile(data.turnstileToken, clientIp);
+    const ip = clientIp(req);
+    const turnstileOk = await verifyTurnstile(data.turnstileToken, ip);
     if (!turnstileOk) {
       return jsonError(res, 403, 'CAPTCHA_FAILED');
     }
 
     const email = escapeHeaderSafe(data.email.toLowerCase());
+    // 2 envois Resend : notif interne + accusé utilisateur
+    const SEND_UNITS = 2;
     const gate = quota.canSend({
       email,
-      ip: clientIp,
+      ip,
+      units: SEND_UNITS,
       emailCooldownMs: EMAIL_COOLDOWN_MS,
       ipHourMax: IP_HOUR_MAX,
       ipDayMax: IP_DAY_MAX,
     });
     if (!gate.ok) {
-      console.warn('[haythi-api] quota block', gate.error);
+      console.warn('[haythi-api] quota block', gate.error, 'ip=' + ip);
+      // Soft-OK : déjà envoyé / anti double-clic — pas d'erreur UX
+      if (
+        gate.error === 'EMAIL_COOLDOWN' ||
+        gate.error === 'IP_HOUR_LIMIT' ||
+        gate.error === 'IP_DAY_LIMIT'
+      ) {
+        return res.status(200).json({ ok: true, deduped: true });
+      }
       return jsonError(res, 429, gate.error);
     }
 
@@ -249,44 +274,103 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     const company = escapeHeaderSafe(data.company || '');
     const message = stripControl(data.message);
     const protocolLabel = PROTOCOLS[data.subject];
+    const refId = `haythi-contact-${Date.now()}`;
 
     const textBody = [
       'IDENTIFIER: ' + name,
       'ORGANIZATION: ' + (company || 'N/A'),
       'COMMS_CHANNEL: ' + email,
       'PROTOCOL_TYPE: ' + protocolLabel,
-      'CLIENT_IP: ' + (clientIp || 'unknown'),
+      'CLIENT_IP: ' + (ip || 'unknown'),
       '',
       'MISSION_DETAILS:',
       message,
     ].join('\n');
 
-    const { error } = await resend.emails.send({
-      from: RESEND_FROM,
-      to: [RESEND_TO],
-      replyTo: email,
-      subject: `[HAYTHI] ${protocolLabel} — ${name}`.slice(0, 200),
-      text: textBody,
-      headers: {
-        'X-Entity-Ref-ID': `haythi-contact-${Date.now()}`,
-      },
-      tags: [{ name: 'source', value: 'contact-form' }],
-    });
+    let notifyResult;
+    try {
+      notifyResult = await resend.emails.send({
+        from: RESEND_FROM,
+        to: [RESEND_TO],
+        replyTo: email,
+        subject: `[HAYTHI] ${protocolLabel} - ${name}`.slice(0, 200),
+        text: textBody,
+        headers: {
+          'X-Entity-Ref-ID': refId,
+        },
+        tags: [{ name: 'source', value: 'contact-form' }],
+      });
+    } catch (sendErr) {
+      console.error('[haythi-api] resend throw', sendErr?.message || sendErr);
+      return jsonError(res, 502, 'UPSTREAM_THROW');
+    }
 
-    if (error) {
-      console.error('[haythi-api] resend error', error.name || 'unknown');
+    if (notifyResult?.error) {
+      console.error('[haythi-api] resend error', JSON.stringify(notifyResult.error));
       return jsonError(res, 502, 'UPSTREAM_REJECTED');
     }
 
-    const usage = quota.recordSend({ email, ip: clientIp });
-    console.log('[haythi-api] sent', usage.dayCount + '/' + usage.dailyLimit, 'day');
+    const ack = buildAckEmail({
+      lang: data.lang || 'FR',
+      name,
+      subjectKey: data.subject,
+    });
+
+    let unitsUsed = 1;
+    try {
+      let ackResult = await resend.emails.send({
+        from: RESEND_FROM,
+        to: [email],
+        replyTo: RESEND_TO,
+        subject: ack.subject,
+        text: ack.text,
+        html: ack.html,
+        headers: {
+          'X-Entity-Ref-ID': `${refId}-ack`,
+        },
+        tags: [
+          { name: 'source', value: 'contact-ack' },
+          { name: 'type', value: 'ack' },
+          { name: 'lang', value: data.lang === 'EN' ? 'en' : 'fr' },
+        ],
+      });
+      // Fallback texte si HTML rejeté par Resend
+      if (ackResult?.error) {
+        console.error('[haythi-api] ack html error', JSON.stringify(ackResult.error));
+        ackResult = await resend.emails.send({
+          from: RESEND_FROM,
+          to: [email],
+          replyTo: RESEND_TO,
+          subject: ack.subject,
+          text: ack.text,
+          tags: [
+            { name: 'source', value: 'contact-ack' },
+            { name: 'type', value: 'ack-text' },
+          ],
+        });
+      }
+      if (ackResult?.error) {
+        console.error('[haythi-api] ack text error', JSON.stringify(ackResult.error));
+      } else {
+        unitsUsed = SEND_UNITS;
+      }
+    } catch (ackErr) {
+      console.error('[haythi-api] ack throw', ackErr?.message || ackErr);
+    }
+
+    try {
+      const usage = quota.recordSend({ email, ip, units: unitsUsed });
+      console.log('[haythi-api] sent', usage.dayCount + '/' + usage.dailyLimit, 'day', 'units=' + unitsUsed);
+    } catch (quotaErr) {
+      console.error('[haythi-api] quota write fail', quotaErr?.message || quotaErr);
+    }
 
     return res.status(200).json({ ok: true });
   } catch (err) {
     if (err?.type === 'entity.too.large') {
       return jsonError(res, 413, 'PAYLOAD_TOO_LARGE');
     }
-    console.error('[haythi-api] unhandled', err?.message || 'error');
+    console.error('[haythi-api] unhandled', err?.stack || err?.message || 'error');
     return jsonError(res, 500, 'INTERNAL');
   }
 });
