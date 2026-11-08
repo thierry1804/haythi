@@ -7,6 +7,9 @@ import path from 'node:path';
 import { Resend } from 'resend';
 import { z } from 'zod';
 import { buildAckEmail } from './ackEmail.js';
+import { createHash } from 'node:crypto';
+import { openDb } from './db.js';
+import { contactRejectReason, createLead, setLeadEmailStatus } from './leads.js';
 import { createQuotaStore } from './quota.js';
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -16,7 +19,7 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const RESEND_FROM = process.env.RESEND_FROM || 'HAYTHI <contact@mail.haythi.mg>';
 const RESEND_TO = process.env.RESEND_TO || 'contact@haythi.mg';
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || '';
-const MIN_SUBMIT_MS = 2500;
+const DATABASE_PATH = path.resolve(process.cwd(), process.env.DATABASE_PATH || 'data/haythi.sqlite');
 const MAX_BODY_BYTES = 16 * 1024;
 
 // Marge sous Resend Free (100/jour, 3000/mois)
@@ -55,6 +58,12 @@ const contactSchema = z.object({
   lang: z.enum(['FR', 'EN']).optional().default('FR'),
 });
 
+const db = openDb(DATABASE_PATH);
+
+function hashIp(ip) {
+  return ip ? createHash('sha256').update(ip).digest('hex') : null;
+}
+
 const quota = createQuotaStore({
   filePath: path.join(process.cwd(), 'data', 'quota.json'),
   dailyLimit: DAILY_SEND_LIMIT,
@@ -71,25 +80,6 @@ function escapeHeaderSafe(value) {
 
 function jsonError(res, status, code) {
   return res.status(status).json({ ok: false, error: code });
-}
-
-function looksLikeSpam(data) {
-  const message = data.message || '';
-  const name = data.name || '';
-  const urls = message.match(/https?:\/\/|www\./gi) || [];
-  if (urls.length > 2) return 'TOO_MANY_LINKS';
-
-  // Bots: même contenu répété / caractères random
-  if (/(.)\1{9,}/.test(message)) return 'REPEATED_CHARS';
-  if (/[\u0400-\u04FF]{20,}/.test(message) && !/[a-zA-ZÀ-ÿ]{3,}/.test(message)) {
-    // gros bloc cyrillique seul → souvent spam
-    return 'SCRIPT_SPAM';
-  }
-
-  const spamWords = /\b(viagra|casino|crypto\s*invest|forex|seo\s*rank|buyer\s*list|nigerian\s*prince)\b/i;
-  if (spamWords.test(message) || spamWords.test(name)) return 'KEYWORD_SPAM';
-
-  return null;
 }
 
 async function verifyTurnstile(token, ip) {
@@ -211,28 +201,10 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
 
     const data = parsed.data;
 
-    // Honeypot: bots fill hidden field → fake success (no Resend call = 0 quota).
-    if (data.website && data.website.trim() !== '') {
-      console.warn('[haythi-api] honeypot trip');
-      return res.status(200).json({ ok: true });
-    }
-
-    // Timing: submit trop rapide ou timestamp absurde → fake OK, pas d'envoi.
-    if (typeof data.startedAt === 'number') {
-      const elapsed = Date.now() - data.startedAt;
-      if (elapsed < MIN_SUBMIT_MS || elapsed > 1000 * 60 * 60 * 6) {
-        console.warn('[haythi-api] timing trap');
-        return res.status(200).json({ ok: true });
-      }
-    } else if (NODE_ENV === 'production') {
-      // startedAt obligatoire en prod (anti-script nu)
-      console.warn('[haythi-api] missing startedAt');
-      return res.status(200).json({ ok: true });
-    }
-
-    const spamCode = looksLikeSpam(data);
-    if (spamCode) {
-      console.warn('[haythi-api] spam filter', spamCode);
+    // Honeypot / timing / spam → fake OK, pas d'envoi Resend, pas de lead.
+    const rejectReason = contactRejectReason(data, { nodeEnv: NODE_ENV });
+    if (rejectReason) {
+      console.warn('[haythi-api] contact ignored', rejectReason);
       return res.status(200).json({ ok: true });
     }
 
@@ -276,6 +248,30 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     const protocolLabel = PROTOCOLS[data.subject];
     const refId = `haythi-contact-${Date.now()}`;
 
+    let leadId = null;
+    try {
+      ({ id: leadId } = createLead(db, {
+        name,
+        company,
+        email,
+        subject: data.subject,
+        message,
+        lang: data.lang || 'FR',
+        ipHash: hashIp(ip),
+      }));
+    } catch (dbErr) {
+      console.error('[haythi-api] lead insert fail', dbErr?.message || dbErr);
+    }
+
+    const markLead = (status) => {
+      if (!leadId) return;
+      try {
+        setLeadEmailStatus(db, leadId, status);
+      } catch (dbErr) {
+        console.error('[haythi-api] lead status fail', dbErr?.message || dbErr);
+      }
+    };
+
     const textBody = [
       'IDENTIFIER: ' + name,
       'ORGANIZATION: ' + (company || 'N/A'),
@@ -302,11 +298,13 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
       });
     } catch (sendErr) {
       console.error('[haythi-api] resend throw', sendErr?.message || sendErr);
+      markLead('failed');
       return jsonError(res, 502, 'UPSTREAM_THROW');
     }
 
     if (notifyResult?.error) {
       console.error('[haythi-api] resend error', JSON.stringify(notifyResult.error));
+      markLead('failed');
       return jsonError(res, 502, 'UPSTREAM_REJECTED');
     }
 
@@ -317,6 +315,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     });
 
     let unitsUsed = 1;
+    let ackOk = false;
     try {
       let ackResult = await resend.emails.send({
         from: RESEND_FROM,
@@ -353,10 +352,13 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
         console.error('[haythi-api] ack text error', JSON.stringify(ackResult.error));
       } else {
         unitsUsed = SEND_UNITS;
+        ackOk = true;
       }
     } catch (ackErr) {
       console.error('[haythi-api] ack throw', ackErr?.message || ackErr);
     }
+
+    markLead(ackOk ? 'sent' : 'partial');
 
     try {
       const usage = quota.recordSend({ email, ip, units: unitsUsed });
