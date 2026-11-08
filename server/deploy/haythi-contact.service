@@ -1,0 +1,27 @@
+[Unit]
+Description=HAYTHI contact API (Resend)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/haythi-api
+EnvironmentFile=/opt/haythi-api/.env
+ExecStart=/usr/bin/node /opt/haythi-api/src/index.js
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/haythi-api /opt/haythi-api/data
+CapabilityBoundingSet=
+AmbientCapabilities=
+LockPersonality=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

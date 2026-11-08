@@ -1,16 +1,9 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
-
-const protocolLabels: Record<string, string> = {
-  'web-dev': 'Développement Web',
-  architecture: 'Architecture SI',
-  management: 'Management project',
-  consulting: 'Conseil',
-  training: 'Formation',
-};
 
 export default function Contact() {
   const { t } = useI18n();
+  const startedAtRef = useRef(Date.now());
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({
     name: '',
@@ -18,9 +11,10 @@ export default function Contact() {
     email: '',
     subject: '',
     message: '',
+    website: '',
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('sending');
 
@@ -30,24 +24,31 @@ export default function Contact() {
       return;
     }
 
-    const protocol = protocolLabels[formData.subject] ?? formData.subject;
-    const body = [
-      `IDENTIFIER: ${formData.name.trim()}`,
-      `ORGANIZATION: ${formData.company.trim() || 'N/A'}`,
-      `COMMS_CHANNEL: ${formData.email.trim()}`,
-      `PROTOCOL_TYPE: ${protocol}`,
-      '',
-      'MISSION_DETAILS:',
-      formData.message.trim(),
-    ].join('\n');
-
-    const mailto = `mailto:contact@haythi.mg?subject=${encodeURIComponent(
-      `[HAYTHI] ${protocol}`
-    )}&body=${encodeURIComponent(body)}`;
-
     try {
-      window.location.href = mailto;
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          company: formData.company.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject,
+          message: formData.message.trim(),
+          website: formData.website,
+          startedAt: startedAtRef.current,
+        }),
+      });
+
+      const payload = (await res.json().catch(() => null)) as { ok?: boolean } | null;
+      if (!res.ok || !payload?.ok) {
+        setStatus('error');
+        return;
+      }
+
       setStatus('success');
+      startedAtRef.current = Date.now();
+      setFormData({ name: '', company: '', email: '', subject: '', message: '', website: '' });
     } catch {
       setStatus('error');
     }
@@ -138,8 +139,24 @@ export default function Contact() {
             <form
               onSubmit={handleSubmit}
               noValidate
-              className="space-y-6 glass-panel p-8 border border-outline-variant/10"
+              className="relative space-y-6 glass-panel p-8 border border-outline-variant/10"
             >
+              <div
+                aria-hidden="true"
+                className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0"
+              >
+                <label htmlFor="website">Website</label>
+                <input
+                  id="website"
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={formData.website}
+                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                />
+              </div>
+
               <div className="space-y-2">
                 <label
                   htmlFor="identifier"
@@ -262,6 +279,7 @@ export default function Contact() {
                   name="message"
                   required
                   rows={4}
+                  minLength={10}
                   maxLength={4000}
                   value={formData.message}
                   onChange={(e) => {

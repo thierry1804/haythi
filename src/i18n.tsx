@@ -32,8 +32,8 @@ const messages = {
       'Prêt pour une nouvelle implémentation ? Envoyez vos coordonnées pour établir une connexion sécurisée.',
     transmit: 'TRANSMIT_PACKET',
     transmitting: 'TRANSMITTING...',
-    transmitOk: 'TRANSMISSION_COMPLETE // MESSAGE_QUEUED_TO_MAIL_CLIENT',
-    transmitErr: 'ERROR_PROTOCOL // CHECK_FIELDS_OR_MAIL_CLIENT',
+    transmitOk: 'TRANSMISSION_COMPLETE // PACKET_DELIVERED',
+    transmitErr: 'ERROR_PROTOCOL // RETRY_OR_MAIL_CONTACT@HAYTHI.MG',
     privacyTitle: 'PRIVACY_POLICY',
     privacyBody:
       "HAYTHI.MG collecte uniquement les données que vous soumettez via le formulaire de contact (identité, organisation, email, type de mission, détails). Ces données servent exclusivement à répondre à votre demande. Elles ne sont ni vendues ni cédées à des tiers. Conservation : durée nécessaire au traitement de la demande, puis suppression. Contact DPO / responsable : contact@haythi.mg. Vous pouvez demander accès, rectification ou suppression à tout moment.",
@@ -64,8 +64,8 @@ const messages = {
       'Ready for a new implementation? Send credentials to establish a secure channel.',
     transmit: 'TRANSMIT_PACKET',
     transmitting: 'TRANSMITTING...',
-    transmitOk: 'TRANSMISSION_COMPLETE // MESSAGE_QUEUED_TO_MAIL_CLIENT',
-    transmitErr: 'ERROR_PROTOCOL // CHECK_FIELDS_OR_MAIL_CLIENT',
+    transmitOk: 'TRANSMISSION_COMPLETE // PACKET_DELIVERED',
+    transmitErr: 'ERROR_PROTOCOL // RETRY_OR_MAIL_CONTACT@HAYTHI.MG',
     privacyTitle: 'PRIVACY_POLICY',
     privacyBody:
       'HAYTHI.MG only collects data you submit via the contact form (identity, organization, email, mission type, details). Data is used solely to answer your request. It is never sold or shared with third parties. Retention: as long as needed to process the request, then deleted. Contact: contact@haythi.mg. You may request access, correction, or deletion at any time.',
