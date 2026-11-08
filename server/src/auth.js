@@ -25,14 +25,15 @@ export async function verifyPassword(hash, password) {
 }
 
 /**
- * Secret HMAC des sessions. Obligatoire en production (throw si absent).
- * Hors production, une valeur de dev est utilisée.
+ * Secret HMAC des sessions. Obligatoire dès que NODE_ENV !== "development"
+ * (même critère que le flag Secure du cookie) : throw si absent.
+ * Seul NODE_ENV=development utilise une valeur de dev.
  */
 export function getSessionSecret() {
   const secret = process.env.SESSION_SECRET;
   if (secret) return secret;
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("SESSION_SECRET is required when NODE_ENV=production");
+  if (process.env.NODE_ENV !== "development") {
+    throw new Error("SESSION_SECRET is required unless NODE_ENV=development");
   }
   return "haythi-dev-session-secret";
 }

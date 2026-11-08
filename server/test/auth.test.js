@@ -8,8 +8,11 @@ import * as OTPAuth from "otpauth";
 let tempDir;
 let db;
 let auth;
+let prevSecret;
 
 before(async () => {
+  prevSecret = process.env.SESSION_SECRET;
+  process.env.SESSION_SECRET = "test-secret";
   tempDir = await mkdtemp(join(tmpdir(), "haythi-auth-test-"));
   const { openDb } = await import("../src/db.js");
   db = openDb(join(tempDir, "test.sqlite"));
@@ -20,6 +23,8 @@ before(async () => {
 });
 
 after(async () => {
+  if (prevSecret === undefined) delete process.env.SESSION_SECRET;
+  else process.env.SESSION_SECRET = prevSecret;
   db.close();
   await rm(tempDir, { recursive: true, force: true });
 });
@@ -141,16 +146,19 @@ test("cookie is Secure unless NODE_ENV=development", () => {
   });
 });
 
-test("SESSION_SECRET is required in production", () => {
-  withEnv({ NODE_ENV: "production", SESSION_SECRET: undefined }, () => {
-    assert.throws(() => auth.getSessionSecret(), /SESSION_SECRET/);
-    assert.throws(() => auth.createSession(db, "u1"), /SESSION_SECRET/);
-  });
-  withEnv({ NODE_ENV: "production", SESSION_SECRET: "s3cret" }, () => {
-    assert.equal(auth.getSessionSecret(), "s3cret");
-    assert.ok(auth.createSession(db, "u1"));
-  });
+test("SESSION_SECRET is required unless NODE_ENV=development", () => {
+  for (const env of ["production", undefined, "", "test", "staging"]) {
+    withEnv({ NODE_ENV: env, SESSION_SECRET: undefined }, () => {
+      assert.throws(() => auth.getSessionSecret(), /SESSION_SECRET/, `NODE_ENV=${env}`);
+      assert.throws(() => auth.createSession(db, "u1"), /SESSION_SECRET/);
+    });
+    withEnv({ NODE_ENV: env, SESSION_SECRET: "s3cret" }, () => {
+      assert.equal(auth.getSessionSecret(), "s3cret");
+      assert.ok(auth.createSession(db, "u1"));
+    });
+  }
   withEnv({ NODE_ENV: "development", SESSION_SECRET: undefined }, () => {
     assert.ok(auth.getSessionSecret());
+    assert.ok(auth.createSession(db, "u1"));
   });
 });
