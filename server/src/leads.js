@@ -68,3 +68,117 @@ export function setLeadEmailStatus(db, id, status) {
 export function getLead(db, id) {
   return db.prepare("SELECT * FROM leads WHERE id = ?").get(id) ?? null;
 }
+
+export const LEAD_STATUSES = ["new", "in_progress", "replied", "closed", "spam"];
+const LEAD_STATUS_SET = new Set(LEAD_STATUSES);
+
+/** Colonnes de la liste (pas de message complet ni d'ip_hash). */
+const LIST_COLUMNS =
+  "id, created_at, status, name, company, email, subject, lang, email_status";
+
+/**
+ * Liste des leads, du plus récent au plus ancien.
+ * @param {import('better-sqlite3').Database} db
+ * @param {{ status?: string, limit?: number }} [opts]
+ */
+export function listLeads(db, { status, limit = 500 } = {}) {
+  if (status !== undefined && !LEAD_STATUS_SET.has(status)) {
+    throw new Error(`Invalid lead status: ${status}`);
+  }
+  const max = Math.min(Math.max(Math.trunc(Number(limit)) || 500, 1), 1000);
+  if (status) {
+    return db
+      .prepare(
+        `SELECT ${LIST_COLUMNS} FROM leads WHERE status = ? ORDER BY created_at DESC, rowid DESC LIMIT ?`,
+      )
+      .all(status, max);
+  }
+  return db
+    .prepare(`SELECT ${LIST_COLUMNS} FROM leads ORDER BY created_at DESC, rowid DESC LIMIT ?`)
+    .all(max);
+}
+
+/** Ajoute un événement à l'historique d'un lead. */
+export function addEvent(db, leadId, type, payload = {}) {
+  const id = randomUUID();
+  db.prepare(
+    "INSERT INTO lead_events (id, lead_id, created_at, type, payload_json) VALUES (?, ?, ?, ?, ?)",
+  ).run(id, leadId, new Date().toISOString(), type, JSON.stringify(payload));
+  return { id };
+}
+
+export function listEvents(db, leadId) {
+  return db
+    .prepare("SELECT * FROM lead_events WHERE lead_id = ? ORDER BY created_at ASC, rowid ASC")
+    .all(leadId)
+    .map((e) => ({ ...e, payload: safeParse(e.payload_json) }));
+}
+
+function safeParse(json) {
+  try {
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Change le statut et journalise l'événement `status`.
+ * @returns {{ from: string, to: string } | null} null si le lead n'existe pas
+ */
+export function updateStatus(db, id, status) {
+  if (!LEAD_STATUS_SET.has(status)) {
+    throw new Error(`Invalid lead status: ${status}`);
+  }
+  return db.transaction(() => {
+    const lead = getLead(db, id);
+    if (!lead) return null;
+    db.prepare("UPDATE leads SET status = ? WHERE id = ?").run(status, id);
+    addEvent(db, id, "status", { from: lead.status, to: status });
+    return { from: lead.status, to: status };
+  })();
+}
+
+/** Un lead anonymisé n'a plus d'email. */
+export function isAnonymized(lead) {
+  return !lead.email;
+}
+
+/**
+ * Export RGPD (droit d'accès) : lead complet + historique.
+ * @returns {{ lead: object, events: object[] } | null}
+ */
+export function exportLead(db, id) {
+  const lead = getLead(db, id);
+  if (!lead) return null;
+  return { lead, events: listEvents(db, id) };
+}
+
+/**
+ * Anonymisation RGPD : efface les données personnelles du lead, expurge le
+ * contenu des événements (réponses envoyées) et journalise `anonymized`.
+ * @returns {boolean} false si le lead n'existe pas
+ */
+export function anonymizeLead(db, id) {
+  return db.transaction(() => {
+    const lead = getLead(db, id);
+    if (!lead) return false;
+    db.prepare(
+      "UPDATE leads SET name = '', email = '', company = '', message = '', ip_hash = NULL WHERE id = ?",
+    ).run(id);
+    db.prepare("UPDATE lead_events SET payload_json = ? WHERE lead_id = ? AND type = 'reply'").run(
+      JSON.stringify({ redacted: true }),
+      id,
+    );
+    addEvent(db, id, "anonymized", {});
+    return true;
+  })();
+}
+
+/** Suppression définitive du lead et de son historique. */
+export function deleteLead(db, id) {
+  return db.transaction(() => {
+    db.prepare("DELETE FROM lead_events WHERE lead_id = ?").run(id);
+    return db.prepare("DELETE FROM leads WHERE id = ?").run(id).changes > 0;
+  })();
+}

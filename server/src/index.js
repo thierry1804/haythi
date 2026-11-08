@@ -7,6 +7,8 @@ import path from 'node:path';
 import { Resend } from 'resend';
 import { z } from 'zod';
 import { buildAckEmail } from './ackEmail.js';
+import { createAdminRouter } from './adminRoutes.js';
+import { getSessionSecret } from './auth.js';
 import { createHash } from 'node:crypto';
 import { openDb } from './db.js';
 import { contactRejectReason, createLead, setLeadEmailStatus } from './leads.js';
@@ -30,6 +32,12 @@ const IP_HOUR_MAX = Number(process.env.IP_HOUR_MAX || 10);
 const IP_DAY_MAX = Number(process.env.IP_DAY_MAX || 20);
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://haythi.mg,https://www.haythi.mg')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+// Origine(s) du back-office : seules autorisées à envoyer les cookies (credentials).
+const ADMIN_ORIGINS = (process.env.ADMIN_ORIGIN || '')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean);
@@ -147,20 +155,37 @@ app.use(
   }),
 );
 
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-        callback(null, true);
-        return;
-      }
-      callback(new Error('CORS_DENIED'));
-    },
-    methods: ['POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
-    maxAge: 600,
-  }),
-);
+const publicCors = cors({
+  origin(origin, callback) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error('CORS_DENIED'));
+  },
+  methods: ['POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  maxAge: 600,
+});
+
+// Le cookie de session (haythi_admin) est envoyé via `credentials: true` ; l'en-tête
+// Cookie n'est pas un en-tête CORS (interdit côté navigateur), seul X-CSRF-Token l'est.
+const adminCors = cors({
+  origin: ADMIN_ORIGINS,
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-CSRF-Token'],
+  maxAge: 600,
+});
+
+app.use((req, res, next) => {
+  const origin = req.get('origin');
+  if (origin && ADMIN_ORIGINS.includes(origin)) {
+    adminCors(req, res, next);
+    return;
+  }
+  publicCors(req, res, next);
+});
 
 app.use(
   express.json({
@@ -178,6 +203,27 @@ const contactLimiter = rateLimit({
   message: { ok: false, error: 'RATE_LIMIT' },
   keyGenerator: (req) => clientIp(req) || req.ip || 'unknown',
 });
+
+app.locals.db = db;
+
+let adminEnabled = true;
+try {
+  getSessionSecret();
+} catch (err) {
+  adminEnabled = false;
+  console.error('[haythi-api] admin API disabled:', err.message);
+}
+if (adminEnabled) {
+  app.use(
+    '/api/admin',
+    createAdminRouter({
+      resend,
+      resendFrom: RESEND_FROM,
+      resendTo: RESEND_TO,
+      clientIp,
+    }),
+  );
+}
 
 app.get('/healthz', (_req, res) => {
   res.status(200).json({ ok: true, quota: quota.snapshot() });
