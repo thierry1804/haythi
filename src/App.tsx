@@ -9,6 +9,7 @@ import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Privacy from './components/Privacy';
 import Footer from './components/Footer';
+import SeoHead from './components/SeoHead';
 import { I18nProvider, useI18n } from './i18n';
 import { sendPageView } from './analytics';
 
@@ -26,6 +27,7 @@ function App() {
   return (
     <I18nProvider>
       <PageViewBeacon />
+      <SeoHead />
       <div className="min-h-screen bg-surface text-on-surface">
         <Header />
         <main>

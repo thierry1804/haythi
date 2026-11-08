@@ -61,7 +61,11 @@ Config : voir `server/.env.example`.
 Scripts PowerShell dans `scripts/` (deploy API, repair, tests proxy Apache/Nginx).  
 Unit systemd et snippets Nginx / Apache : `server/deploy/`.
 
-Back-office (`admin.haythi.mg`, UI Docker sur `127.0.0.1:8090`, Cloudflare Access) : voir [docs/backoffice-deploy.md](docs/backoffice-deploy.md).
+Back-office (`admin.haythi.mg`, UI Docker sur `127.0.0.1:8090`, Cloudflare Access) :
+
+- Reste à faire (VPS, DNS, Access, vérifs) : [docs/backoffice-reste-a-faire.md](docs/backoffice-reste-a-faire.md)
+- Procédure complète : [docs/backoffice-deploy.md](docs/backoffice-deploy.md)
+- Upload code : `bash scripts/deploy-vps.sh`
 
 ## Scripts utiles
 

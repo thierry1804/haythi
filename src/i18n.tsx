@@ -22,10 +22,14 @@ const messages = {
     closeMenu: 'Fermer le menu',
     toggleLang: 'Passer en anglais',
     protocol01: 'PROTOCOL_01: SERVICES',
+    seoTitle:
+      'Consultant IT Freelance — Développement Web, Conseil SI & Architecture | HAYTHI',
+    seoDescription:
+      'Consultant IT freelance (15+ ans) : développement web, conseil et audit SI, architecture applicative, management de projets Agile/PMP. Interventions remote et internationales. Contactez HAYTHI.',
     heroTitleLead: 'EXPERTISE IT &',
     heroTitleAccent: 'CONSULTING',
     heroBody:
-      "Consultant IT Freelance | 15+ ans d'expérience. Solutions d'ingénierie logicielle de haute précision. Nous transformons des concepts complexes en infrastructures numériques résilientes et performantes.",
+      "Consultant IT freelance | 15+ ans d'expérience. Développement web, conseil SI, architecture applicative et management de projets. Ingénierie logicielle de haute précision — remote et international.",
     ctaServices: 'Découvrir mes services',
     ctaRdv: 'Prendre RDV',
     contactIntro:
@@ -54,10 +58,14 @@ const messages = {
     closeMenu: 'Close menu',
     toggleLang: 'Switch to French',
     protocol01: 'PROTOCOL_01: SERVICES',
+    seoTitle:
+      'Freelance IT Consultant — Web Development, IT Advisory & Architecture | HAYTHI',
+    seoDescription:
+      'Freelance IT consultant (15+ years): web development, IT advisory & audit, application architecture, Agile/PMP project management. Remote and international engagements. Contact HAYTHI.',
     heroTitleLead: 'IT EXPERTISE &',
     heroTitleAccent: 'CONSULTING',
     heroBody:
-      'Freelance IT Consultant | 15+ years experience. High-precision software engineering. We turn complex concepts into resilient, high-performance digital infrastructures.',
+      'Freelance IT consultant | 15+ years experience. Web development, IT advisory, application architecture and project management. High-precision software engineering — remote and international.',
     ctaServices: 'Explore services',
     ctaRdv: 'Book a call',
     contactIntro:

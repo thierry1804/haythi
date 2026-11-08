@@ -133,11 +133,14 @@ Exemple avec `ufw` (plages à jour : <https://www.cloudflare.com/ips-v4> et `/ip
 
 ```bash
 sudo ufw delete allow 443/tcp 2>/dev/null || true
-for ip in $(curl -fsS https://www.cloudflare.com/ips-v4 https://www.cloudflare.com/ips-v6); do
+# Deux appels curl (et -w '\\n') : sinon la dernière plage IPv4 fusionne avec la 1re IPv6
+for ip in $(curl -fsS -w '\n' https://www.cloudflare.com/ips-v4; curl -fsS -w '\n' https://www.cloudflare.com/ips-v6); do
+  [ -n "$ip" ] || continue
   sudo ufw allow proto tcp from "$ip" to any port 443 comment 'cloudflare'
 done
 sudo ufw status numbered
 ```
+
 
 Vérifier (depuis une machine **hors** Cloudflare, par exemple le poste de dev) que l'origine directe est bloquée : la commande doit expirer ou être refusée, jamais renvoyer un certificat ni une page.
 

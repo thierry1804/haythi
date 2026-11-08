@@ -11,8 +11,12 @@ export default function Services() {
               </span>
             </div>
             <h2 className="font-headline tracking-tighter text-3xl md:text-5xl font-bold text-on-surface uppercase">
-              Services d&apos;excellence IT
+              Services IT freelance
             </h2>
+            <p className="text-on-surface-variant font-body text-sm md:text-base leading-relaxed max-w-xl">
+              Offre complète pour entreprises et équipes produit : développement web, conseil SI,
+              architecture et pilotage de projets — en remote comme en mission internationale.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -25,8 +29,8 @@ export default function Services() {
                 DÉVELOPPEMENT WEB
               </h3>
               <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
-                Applications web sur mesure avec Symfony, PHP, CodeIgniter. 15 ans d&apos;expertise
-                en développement backend et frontend.
+                Applications web sur mesure (React, Next.js, Symfony, PHP). 15 ans d&apos;expertise
+                backend et frontend pour livrer des produits robustes et maintenables.
               </p>
               <div className="flex flex-wrap gap-2">
                 {['REACT.JS', 'NEXT.JS', 'SYMFONY', 'PHP'].map((tag) => (
@@ -49,7 +53,8 @@ export default function Services() {
                 CONSEIL &amp; AUDIT
               </h3>
               <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
-                Audit qualité ISO 9001, optimisation des SI, conseil stratégique et opérationnel.
+                Conseil IT et audit SI : qualité ISO 9001, optimisation des systèmes d&apos;information,
+                recommandations stratégiques et opérationnelles.
               </p>
               <div className="border-t border-outline-variant/10 pt-6 mt-auto">
                 <div className="flex items-center text-[10px] font-headline tracking-widest text-primary">
@@ -68,8 +73,8 @@ export default function Services() {
                 ARCHITECTURE SI
               </h3>
               <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
-                Conception et élaboration d&apos;architectures applicatives robustes, scalables et
-                sécurisées.
+                Architecture SI et conception applicative : systèmes robustes, scalables et
+                sécurisés, alignés sur vos contraintes métier et cloud.
               </p>
               <div className="space-y-3 mt-auto">
                 <div className="w-full bg-surface-container-highest h-0.5">
@@ -91,8 +96,8 @@ export default function Services() {
                 MANAGEMENT DE PROJETS IT
               </h3>
               <p className="text-on-surface-variant font-body text-sm mb-8 max-w-md leading-relaxed">
-                Gestion de projets IT de A à Z, coordination d&apos;équipes, méthodologies agiles
-                (Scrum Master certifié PMP).
+                Management de projets IT de bout en bout : coordination d&apos;équipes, Agile/Scrum,
+                certification PMP — du cadrage à la mise en production.
               </p>
               <div className="grid grid-cols-2 gap-4 relative z-10">
                 {['AWS / AZURE / GCP', 'DOCKER / K8S', 'SCRUM / AGILE', 'PMP CERTIFIED'].map(
