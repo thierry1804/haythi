@@ -1,0 +1,25 @@
+# Beacon de visite first-party : POST https://haythi.mg/api/t
+#
+# À ajouter dans le <VirtualHost *:443> de haythi.mg, à côté du bloc
+# <Location "/api/contact"> (modules : proxy, proxy_http, headers).
+#
+# NE PAS ACTIVER avant que le texte de confidentialité mis à jour
+# (mesure d'audience first-party agrégée) soit déployé sur le site public.
+#
+# Prérequis déjà en place pour /api/contact :
+#   ProxyPreserveHost On
+#   ProxyRequests Off
+
+<Location "/api/t">
+    ProxyPass        http://127.0.0.1:8787/api/t
+    ProxyPassReverse http://127.0.0.1:8787/api/t
+    RequestHeader set X-Forwarded-Proto "https" env=HTTPS
+
+    # Payload minuscule (path, referrer, lang) : 2 Ko suffisent.
+    LimitRequestBody 2048
+
+    # Beacon = POST uniquement.
+    <LimitExcept POST>
+        Require all denied
+    </LimitExcept>
+</Location>

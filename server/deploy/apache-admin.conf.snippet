@@ -1,0 +1,64 @@
+# Vhost Apache pour le back-office : https://admin.haythi.mg
+#
+# Installation (Debian/Ubuntu) :
+#   sudo a2enmod proxy proxy_http headers ssl rewrite
+#   sudo cp apache-admin.conf.snippet /etc/apache2/sites-available/admin.haythi.mg.conf
+#   (adapter SSLCertificateFile / SSLCertificateKeyFile)
+#   sudo a2ensite admin.haythi.mg
+#   sudo apache2ctl configtest && sudo systemctl reload apache2
+#
+# Architecture :
+#   /api/*  -> API Node hôte (systemd haythi-contact)  127.0.0.1:8787
+#   /*      -> conteneur Docker UI admin (nginx)        127.0.0.1:8090
+# Le proxy /api sur le même hôte garantit un cookie de session same-site
+# (haythi_admin : HttpOnly, Secure, SameSite=Strict).
+#
+# Protection d'accès : Cloudflare Access (allowlist email) devant ce hostname.
+# Le vhost ne doit pas être joignable en direct hors Cloudflare si possible
+# (pare-feu : n'autoriser 443 que depuis les plages IP Cloudflare).
+
+<VirtualHost *:80>
+    ServerName admin.haythi.mg
+
+    RewriteEngine On
+    RewriteRule ^/?(.*)$ https://admin.haythi.mg/$1 [R=301,L]
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName admin.haythi.mg
+    ServerAdmin contact@haythi.mg
+
+    SSLEngine on
+    # Certificat Let's Encrypt (certbot) ou certificat d'origine Cloudflare.
+    SSLCertificateFile    /etc/letsencrypt/live/admin.haythi.mg/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/admin.haythi.mg/privkey.pem
+
+    ServerSignature Off
+
+    ProxyPreserveHost On
+    ProxyRequests Off
+
+    RequestHeader set X-Forwarded-Proto "https"
+
+    # Jamais indexé (en plus des en-têtes posés par le conteneur UI).
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+
+    # 1) API (doit rester AVANT le ProxyPass "/" : premier match gagnant).
+    #    Variante plus stricte, l'UI n'appelle que /api/admin/* :
+    #      ProxyPass        /api/admin/ http://127.0.0.1:8787/api/admin/
+    #      ProxyPassReverse /api/admin/ http://127.0.0.1:8787/api/admin/
+    ProxyPass        /api/ http://127.0.0.1:8787/api/
+    ProxyPassReverse /api/ http://127.0.0.1:8787/api/
+
+    <Location "/api/">
+        # Corps admin max 16 Ko (même limite que l'API).
+        LimitRequestBody 16384
+    </Location>
+
+    # 2) UI admin (conteneur Docker, publié sur 127.0.0.1:8090 uniquement).
+    ProxyPass        / http://127.0.0.1:8090/
+    ProxyPassReverse / http://127.0.0.1:8090/
+
+    ErrorLog  ${APACHE_LOG_DIR}/admin.haythi.mg-error.log
+    CustomLog ${APACHE_LOG_DIR}/admin.haythi.mg-access.log combined
+</VirtualHost>

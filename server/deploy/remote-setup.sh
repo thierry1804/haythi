@@ -16,6 +16,7 @@ sudo mkdir -p /opt/haythi-api
 sudo rsync -a --delete \
   --exclude node_modules \
   --exclude .env \
+  --exclude data \
   /tmp/haythi-api-upload/ /opt/haythi-api/
 
 if [ -f /tmp/haythi-api.env ]; then

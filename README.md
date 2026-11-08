@@ -59,7 +59,9 @@ Config : voir `server/.env.example`.
 ## Déploiement
 
 Scripts PowerShell dans `scripts/` (deploy API, repair, tests proxy Apache/Nginx).  
-Unit systemd et snippets Nginx : `server/deploy/`.
+Unit systemd et snippets Nginx / Apache : `server/deploy/`.
+
+Back-office (`admin.haythi.mg`, UI Docker sur `127.0.0.1:8090`, Cloudflare Access) : voir [docs/backoffice-deploy.md](docs/backoffice-deploy.md).
 
 ## Scripts utiles
 
