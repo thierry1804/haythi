@@ -13,7 +13,7 @@ import { openDb } from './db.js';
 import { PROTOCOLS } from './protocols.js';
 import { contactRejectReason, createLead, setLeadEmailStatus } from './leads.js';
 import { createQuotaStore } from './quota.js';
-import { createBeaconHandler } from './visits.js';
+import { clientIpFrom, createBeaconHandler } from './visits.js';
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOST = process.env.HOST || '127.0.0.1';
@@ -117,13 +117,7 @@ function originAllowed(req) {
 
 /** Vrai IP client derrière Cloudflare/Apache (pas l'IP edge CF). */
 function clientIp(req) {
-  const cf = (req.get('cf-connecting-ip') || '').trim();
-  if (cf) return cf;
-  const real = (req.get('x-real-ip') || '').trim();
-  if (real) return real;
-  const xff = (req.get('x-forwarded-for') || '').split(',')[0]?.trim();
-  if (xff) return xff;
-  return req.ip || '';
+  return clientIpFrom(req);
 }
 
 if (!RESEND_API_KEY.startsWith('re_')) {
@@ -234,6 +228,7 @@ app.post(
   createBeaconHandler({
     ownHosts: ALLOWED_ORIGINS.map((o) => new URL(o).hostname),
     isAllowed: originAllowed,
+    clientIp,
   }),
 );
 

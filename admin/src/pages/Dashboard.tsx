@@ -1,14 +1,59 @@
 import { useEffect, useState } from 'react';
 import { ApiError, apiGet } from '../api';
-import { formatDay } from '../labels';
+import { formatDate, formatDay } from '../labels';
 import type { LeadSummary } from '../labels';
 
 interface VisitStats {
   days: { day: string; hits: number }[];
   topReferrers: { host: string; hits: number }[];
+  directHits: number;
+  topPaths: { path: string; hits: number }[];
+  langs: { lang: string; hits: number }[];
+  countries?: { code: string; hits: number }[];
+  recent?: {
+    id: number;
+    created_at: string;
+    ip: string;
+    country: string;
+    path: string;
+    referrer_host: string;
+    lang: string;
+    user_agent: string;
+  }[];
 }
 
 const total = (s: VisitStats) => s.days.reduce((n, d) => n + d.hits, 0);
+
+function langLabel(lang: string) {
+  if (lang === 'FR') return 'Français';
+  if (lang === 'EN') return 'Anglais';
+  return 'Non précisée';
+}
+
+function pathLabel(path: string) {
+  return path === '/' ? '/ (accueil)' : path;
+}
+
+const regionNames = new Intl.DisplayNames(['fr'], { type: 'region' });
+
+function countryLabel(code: string) {
+  if (!code) return 'Inconnu';
+  if (code === 'T1') return 'Tor';
+  try {
+    return regionNames.of(code) || code;
+  } catch {
+    return code;
+  }
+}
+
+function browserLabel(ua: string) {
+  if (!ua) return '—';
+  if (ua.includes('Edg/')) return 'Edge';
+  if (ua.includes('Firefox/')) return 'Firefox';
+  if (ua.includes('Chrome/') && !ua.includes('Chromium')) return 'Chrome';
+  if (ua.includes('Safari/') && !ua.includes('Chrome/')) return 'Safari';
+  return ua.slice(0, 40);
+}
 
 export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => void }) {
   const [stats7, setStats7] = useState<VisitStats | null>(null);
@@ -50,6 +95,12 @@ export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => vo
   }
 
   const peak = stats7.days.reduce((n, d) => Math.max(n, d.hits), 0);
+  const directHits = stats7.directHits ?? 0;
+  const topPaths = stats7.topPaths ?? [];
+  const langs = stats7.langs ?? [];
+  const countries = stats7.countries ?? [];
+  const recent = stats7.recent ?? [];
+  const detailPending = countries.length === 0 && recent.length === 0 && total(stats7) > 0;
 
   return (
     <div className="page">
@@ -101,22 +152,84 @@ export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => vo
           </table>
         </section>
         <section className="panel">
-          <h2>Sources</h2>
-          {stats30.topReferrers.length === 0 ? (
-            <p className="empty">Aucune source externe</p>
+          <h2>Sources, 7 jours</h2>
+          {total(stats7) === 0 ? (
+            <p className="empty">Aucune visite</p>
+          ) : (
+            <>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Source</th>
+                    <th className="num">Visites</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {directHits > 0 && (
+                    <tr>
+                      <td>Accès direct</td>
+                      <td className="num">{directHits}</td>
+                    </tr>
+                  )}
+                  {stats7.topReferrers.map((r) => (
+                    <tr key={r.host}>
+                      <td>{r.host}</td>
+                      <td className="num">{r.hits}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {stats7.topReferrers.length === 0 && (
+                <p className="muted">
+                  Aucun site d’origine transmis. Adresse saisie, favori, ou referrer masqué par le navigateur.
+                </p>
+              )}
+            </>
+          )}
+        </section>
+      </div>
+
+      <div className="split panel-space">
+        <section className="panel">
+          <h2>Pages, 7 jours</h2>
+          {topPaths.length === 0 ? (
+            <p className="empty">Aucune visite</p>
           ) : (
             <table>
               <thead>
                 <tr>
-                  <th>Source</th>
+                  <th>Page</th>
                   <th className="num">Visites</th>
                 </tr>
               </thead>
               <tbody>
-                {stats30.topReferrers.map((r) => (
-                  <tr key={r.host}>
-                    <td>{r.host}</td>
-                    <td className="num">{r.hits}</td>
+                {topPaths.map((p) => (
+                  <tr key={p.path}>
+                    <td>{pathLabel(p.path)}</td>
+                    <td className="num">{p.hits}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+        <section className="panel">
+          <h2>Langues, 7 jours</h2>
+          {langs.length === 0 ? (
+            <p className="empty">Aucune visite</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Langue</th>
+                  <th className="num">Visites</th>
+                </tr>
+              </thead>
+              <tbody>
+                {langs.map((l) => (
+                  <tr key={l.lang || 'unknown'}>
+                    <td>{langLabel(l.lang)}</td>
+                    <td className="num">{l.hits}</td>
                   </tr>
                 ))}
               </tbody>
@@ -124,6 +237,73 @@ export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => vo
           )}
         </section>
       </div>
+
+      <section className="panel panel-space">
+          <h2>Pays, 7 jours</h2>
+          {countries.length === 0 ? (
+            <p className="empty">{detailPending ? 'Pas encore de pays enregistré' : 'Aucune visite'}</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Pays</th>
+                  <th className="num">Visites</th>
+                </tr>
+              </thead>
+              <tbody>
+                {countries.map((c) => (
+                  <tr key={c.code || 'unknown'}>
+                    <td>{countryLabel(c.code)}</td>
+                    <td className="num">{c.hits}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {detailPending && (
+            <p className="muted">
+              Pays, IP, heure et navigateur sont enregistrés à partir de cette version. Les visites déjà comptées n’ont pas ces données.
+            </p>
+          )}
+      </section>
+
+      <section className="panel panel-space visit-log">
+        <h2>Dernières visites</h2>
+        {recent.length === 0 ? (
+          <p className="empty">{detailPending ? 'Aucune ligne détaillée' : 'Aucune visite'}</p>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Quand</th>
+                  <th>Pays</th>
+                  <th>IP</th>
+                  <th>Page</th>
+                  <th>Langue</th>
+                  <th>Source</th>
+                  <th>Navigateur</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recent.map((v) => (
+                  <tr key={v.id}>
+                    <td className="nowrap">{formatDate(v.created_at)}</td>
+                    <td>{countryLabel(v.country)}</td>
+                    <td className="nowrap">{v.ip || '—'}</td>
+                    <td>{pathLabel(v.path)}</td>
+                    <td>{langLabel(v.lang)}</td>
+                    <td>{v.referrer_host || 'Accès direct'}</td>
+                    <td className="ua" title={v.user_agent}>
+                      {browserLabel(v.user_agent)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

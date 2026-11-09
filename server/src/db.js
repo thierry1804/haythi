@@ -49,6 +49,19 @@ CREATE TABLE IF NOT EXISTS visits_daily (
   hits INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (day, path, referrer_host, lang)
 );
+
+CREATE TABLE IF NOT EXISTS visit_hits (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_at TEXT NOT NULL,
+  ip TEXT NOT NULL,
+  country TEXT NOT NULL,
+  path TEXT NOT NULL,
+  referrer_host TEXT NOT NULL,
+  lang TEXT NOT NULL,
+  user_agent TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS visit_hits_created ON visit_hits (created_at);
 `;
 
 /**

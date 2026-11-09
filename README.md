@@ -64,6 +64,8 @@ Unit systemd et snippets Nginx / Apache : `server/deploy/`.
 Back-office (`admin.haythi.mg`, UI Docker sur `127.0.0.1:8090`, Cloudflare Access) :
 
 - Reste à faire (VPS, DNS, Access, vérifs) : [docs/backoffice-reste-a-faire.md](docs/backoffice-reste-a-faire.md)
+
+SEO (pages par intention, prérendu, signaux locaux) : [docs/seo-chantier.md](docs/seo-chantier.md)
 - Procédure complète : [docs/backoffice-deploy.md](docs/backoffice-deploy.md)
 - Upload code : `bash scripts/deploy-vps.sh`
 

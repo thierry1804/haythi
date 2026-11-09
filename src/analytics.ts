@@ -24,7 +24,7 @@ export function sendPageView(lang: Lang): void {
   sent = true;
 
   const body: { path: string; referrer?: string; lang: Lang } = {
-    path: '/',
+    path: window.location.pathname || '/',
     lang,
   };
   const referrer = externalReferrerOrigin();

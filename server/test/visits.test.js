@@ -8,7 +8,13 @@ import express from "express";
 import * as auth from "../src/auth.js";
 import { createAdminRouter } from "../src/adminRoutes.js";
 import { openDb } from "../src/db.js";
-import { createBeaconHandler, getVisitStats, recordVisit } from "../src/visits.js";
+import {
+  countryCodeOf,
+  createBeaconHandler,
+  getVisitStats,
+  recordVisit,
+  recordVisitHit,
+} from "../src/visits.js";
 
 const CSRF = "csrf-token-for-tests";
 
@@ -108,6 +114,47 @@ test("getVisitStats zero-fills days and ranks referrers", () => {
     { host: "google.com", hits: 2 },
     { host: "bing.com", hits: 1 },
   ]);
+  assert.equal(stats.directHits, 1);
+  assert.deepEqual(stats.topPaths, [
+    { path: "/", hits: 3 },
+    { path: "/b", hits: 1 },
+  ]);
+  assert.deepEqual(stats.langs, [{ lang: "FR", hits: 4 }]);
+  assert.deepEqual(stats.countries, []);
+  assert.deepEqual(stats.recent, []);
+});
+
+test("countryCodeOf keeps ISO codes and drops unknown", () => {
+  assert.equal(countryCodeOf("mg"), "MG");
+  assert.equal(countryCodeOf("T1"), "T1");
+  assert.equal(countryCodeOf("XX"), "");
+  assert.equal(countryCodeOf("France"), "");
+  assert.equal(countryCodeOf(""), "");
+});
+
+test("recordVisitHit stores ip and country and drops rows older than 30 days", () => {
+  const now = new Date("2026-04-01T12:00:00.000Z");
+  recordVisitHit(db, {
+    ip: "1.1.1.1",
+    country: "FR",
+    path: "/old-hit",
+    at: new Date("2026-02-01T00:00:00.000Z"),
+  });
+  recordVisitHit(db, {
+    ip: "41.188.1.2",
+    country: "MG",
+    path: "/now-hit",
+    lang: "FR",
+    userAgent: "Mozilla/5.0",
+    at: now,
+  });
+  assert.equal(db.prepare("SELECT 1 FROM visit_hits WHERE path = '/old-hit'").get(), undefined);
+  const row = db.prepare("SELECT ip, country, lang FROM visit_hits WHERE path = '/now-hit'").get();
+  assert.deepEqual(row, { ip: "41.188.1.2", country: "MG", lang: "FR" });
+  const stats = getVisitStats(db, 7, now);
+  assert.deepEqual(stats.countries, [{ code: "MG", hits: 1 }]);
+  assert.equal(stats.recent[0].ip, "41.188.1.2");
+  assert.equal(stats.recent[0].path, "/now-hit");
 });
 
 test("POST /api/t records a visit (path normalized, referrer reduced to host)", async () => {
@@ -125,6 +172,24 @@ test("POST /api/t records a visit (path normalized, referrer reduced to host)", 
     .get(day);
   assert.equal(row.referrer_host, "www.google.com");
   assert.equal(row.lang, "EN");
+});
+
+test("POST /api/t stores ip, country and user-agent", async () => {
+  const res = await beacon(
+    { path: "/geo", lang: "FR" },
+    {
+      "cf-connecting-ip": "2001:db8::20",
+      "cf-ipcountry": "MG",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0) Chrome/120.0.0.0",
+    },
+  );
+  assert.equal(res.status, 204);
+  const row = db
+    .prepare("SELECT ip, country, user_agent FROM visit_hits WHERE path = '/geo'")
+    .get();
+  assert.equal(row.ip, "2001:db8::20");
+  assert.equal(row.country, "MG");
+  assert.match(row.user_agent, /Chrome\/120/);
 });
 
 test("POST /api/t ignores internal referrer", async () => {

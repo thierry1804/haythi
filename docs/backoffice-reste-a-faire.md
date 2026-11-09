@@ -12,6 +12,7 @@ Déploiement détaillé : [`docs/backoffice-deploy.md`](backoffice-deploy.md).
 | UI admin React + Docker (`nginx-unprivileged`, `:8090→8080`) | Fait |
 | Privacy FR/EN + beacon front | Fait |
 | SEO landing (meta, OG, JSON-LD, sitemap, robots) | Fait (souvent encore **non commit** dans le working tree) |
+| Positionnement Google (pages, prérendu, géo) | Chantier suivant : [docs/seo-chantier.md](seo-chantier.md) |
 | Script `scripts/deploy-vps.sh` (upload API + admin Docker + `dist/`) | Fait |
 | Tests locaux API | 44/44 |
 | Essai local BO | OK (`http://127.0.0.1:5174`, compte `admin@localhost`) |

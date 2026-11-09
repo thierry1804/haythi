@@ -457,6 +457,19 @@ table a:hover {
   color: var(--muted);
 }
 
+.visit-log .table-wrap {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.ua {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .status-new {
   color: var(--accent);
 }

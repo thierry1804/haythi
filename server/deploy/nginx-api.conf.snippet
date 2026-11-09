@@ -36,6 +36,8 @@ location = /api/t {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Content-Type $content_type;
+    proxy_set_header CF-Connecting-IP $http_cf_connecting_ip;
+    proxy_set_header CF-IPCountry $http_cf_ipcountry;
 
     client_max_body_size 2k;
     proxy_read_timeout 5s;
