@@ -231,6 +231,9 @@ test("reply: raw subject key becomes Re: [HAYTHI] <label>; html is escaped", asy
   assert.match(sent[0].text, /<script>/);
   assert.doesNotMatch(sent[0].html, /<script>/);
   assert.match(sent[0].html, /&lt;script&gt;.*&amp; merci/);
+  assert.match(sent[0].html, /TRANSMISSION_REPLY/);
+  assert.match(sent[0].html, /HAYTHI/);
+  assert.match(sent[0].html, /Architecture SI/);
   const ev = db.prepare("SELECT payload_json FROM lead_events WHERE lead_id = ? AND type = 'reply'").get(id);
   assert.equal(JSON.parse(ev.payload_json).subject, "Re: [HAYTHI] Architecture SI");
 });

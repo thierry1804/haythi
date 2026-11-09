@@ -148,6 +148,8 @@ export default function LeadDetail({
     <div className="page">
       <nav className="crumb" aria-label="Fil d'Ariane">
         <a href="#/leads">Leads</a>
+        <span aria-hidden="true"> / </span>
+        <span>Traitement</span>
       </nav>
       <div className="page-head">
         <h1>{anonymized ? 'Lead anonymisé' : lead.name}</h1>
@@ -166,6 +168,11 @@ export default function LeadDetail({
           </select>
         </label>
       </div>
+      {lead.status === 'new' && !anonymized && (
+        <p className="muted">
+          Lead nouveau : réponds ci-dessous ou passe le statut à « En cours ».
+        </p>
+      )}
 
       {lead.status === 'closed' && (
         <div className="banner" role="status">

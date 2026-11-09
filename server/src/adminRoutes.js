@@ -30,6 +30,7 @@ import {
   listLeads,
   updateStatus,
 } from "./leads.js";
+import { buildReplyEmail } from "./ackEmail.js";
 import { replySubject } from "./protocols.js";
 import { getVisitStats, VISIT_STATS_DAYS } from "./visits.js";
 
@@ -54,21 +55,6 @@ const replySchema = z.object({
 
 function stripControl(value) {
   return value.replace(/[\u0000-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim();
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-/** HTML minimal (texte échappé, retours à la ligne conservés) pour la réponse admin. */
-function replyHtml(text) {
-  const body = escapeHtml(text.replace(/\r\n?/g, "\n")).replace(/\n/g, "<br>\n");
-  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#111">${body}</div>`;
 }
 
 function newCsrfToken() {
@@ -303,6 +289,14 @@ export function createAdminRouter({
         return;
       }
 
+      const mail = buildReplyEmail({
+        lang: lead.lang === "EN" ? "EN" : "FR",
+        name: lead.name || "",
+        subject: subject.slice(0, 200),
+        text,
+        subjectKey: lead.subject || "",
+      });
+
       let result;
       try {
         result = await resend.emails.send({
@@ -310,9 +304,9 @@ export function createAdminRouter({
           to: [lead.email],
           cc: [resendTo],
           replyTo: resendTo,
-          subject: subject.slice(0, 200),
-          text,
-          html: replyHtml(text),
+          subject: mail.subject,
+          text: mail.text,
+          html: mail.html,
           tags: [{ name: "source", value: "admin-reply" }],
         });
       } catch (err) {

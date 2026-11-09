@@ -29,7 +29,7 @@ const COPY = {
     subject: '[HAYTHI] Accuse de reception',
     preheader: 'Votre message a bien été reçu — réponse sous 24h ouvrables.',
     badge: 'TRANSMISSION_ACK',
-    title: 'CONTACT_ROOT',
+    prompt: '&gt; init ack --secure',
     hello: (name) => `Bonjour ${name},`,
     body: 'Nous avons bien reçu votre message via haythi.mg. Une connexion sécurisée est établie.',
     topicLabel: 'PROTOCOL_TYPE',
@@ -44,7 +44,7 @@ const COPY = {
     subject: '[HAYTHI] Message received',
     preheader: 'Your message was received — reply within 24 business hours.',
     badge: 'TRANSMISSION_ACK',
-    title: 'CONTACT_ROOT',
+    prompt: '&gt; init ack --secure',
     hello: (name) => `Hello ${name},`,
     body: 'We received your message via haythi.mg. A secure channel is established.',
     topicLabel: 'PROTOCOL_TYPE',
@@ -56,6 +56,101 @@ const COPY = {
     team: 'The HAYTHI team',
   },
 };
+
+const REPLY_COPY = {
+  FR: {
+    badge: 'TRANSMISSION_REPLY',
+    prompt: '&gt; init reply --secure',
+    hello: (name) => (name ? `Bonjour ${name},` : 'Bonjour,'),
+    preheader: 'Réponse HAYTHI à votre demande.',
+    cta: 'RETOUR_SITE',
+    footer: 'HAYTHI.MG — Expertise IT & Conseil Digital',
+    team: 'L’équipe HAYTHI',
+  },
+  EN: {
+    badge: 'TRANSMISSION_REPLY',
+    prompt: '&gt; init reply --secure',
+    hello: (name) => (name ? `Hello ${name},` : 'Hello,'),
+    preheader: 'HAYTHI reply to your request.',
+    cta: 'BACK_TO_SITE',
+    footer: 'HAYTHI.MG — IT Expertise & Digital Consulting',
+    team: 'The HAYTHI team',
+  },
+};
+
+/**
+ * Coque HTML commune (fond sombre, bandeau HAYTHI.MG).
+ * @param {{ lang?: string, title: string, badge: string, prompt: string, preheader?: string, bodyHtml: string }} opts
+ */
+export function haythiMailShell({
+  lang = 'FR',
+  title,
+  badge,
+  prompt,
+  preheader = '',
+  bodyHtml,
+}) {
+  const locale = lang === 'EN' ? 'EN' : 'FR';
+  return `<!DOCTYPE html>
+<html lang="${locale === 'FR' ? 'fr' : 'en'}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="supported-color-schemes" content="dark" />
+  <title>${escapeHtml(title)}</title>
+  <!--[if mso]><style>body,table,td{font-family:Arial,sans-serif!important}</style><![endif]-->
+</head>
+<body style="margin:0;padding:0;background:#0e0e0e;color:#e4e2e1;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(preheader)}</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0e0e0e;padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#131313;border:1px solid rgba(0,218,243,0.18);">
+          <tr>
+            <td style="padding:20px 24px;border-bottom:1px solid rgba(0,218,243,0.12);">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#e4e2e1;">
+                    HAYTHI<span style="color:#00daf3;">.MG</span>
+                  </td>
+                  <td align="right" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#00daf3;">
+                    ${escapeHtml(badge)}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 24px 8px 24px;">
+              <div style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#00daf3;margin-bottom:12px;">
+                ${prompt}
+              </div>
+              <h1 style="margin:0 0 18px 0;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:700;letter-spacing:-0.04em;text-transform:uppercase;color:#e4e2e1;">
+                CONTACT_<br /><span style="color:#00daf3;">ROOT</span>
+              </h1>
+              ${bodyHtml}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 24px 24px 24px;border-top:1px solid rgba(0,218,243,0.12);">
+              <p style="margin:0 0 8px 0;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(228,226,225,0.45);">
+                ${escapeHtml(locale === 'FR' ? COPY.FR.footer : COPY.EN.footer)}
+              </p>
+              <p style="margin:0;font-family:Inter,Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#cac5c4;">
+                <a href="mailto:contact@haythi.mg" style="color:#00daf3;text-decoration:none;">contact@haythi.mg</a>
+                &nbsp;·&nbsp;
+                <a href="https://haythi.mg" style="color:#00daf3;text-decoration:none;">haythi.mg</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
 
 export function buildAckEmail({ lang = 'FR', name, subjectKey }) {
   const locale = lang === 'EN' ? 'EN' : 'FR';
@@ -80,44 +175,7 @@ export function buildAckEmail({ lang = 'FR', name, subjectKey }) {
     'contact@haythi.mg',
   ].join('\n');
 
-  const html = `<!DOCTYPE html>
-<html lang="${locale === 'FR' ? 'fr' : 'en'}">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
-  <meta name="supported-color-schemes" content="dark" />
-  <title>${escapeHtml(t.subject)}</title>
-  <!--[if mso]><style>body,table,td{font-family:Arial,sans-serif!important}</style><![endif]-->
-</head>
-<body style="margin:0;padding:0;background:#0e0e0e;color:#e4e2e1;">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(t.preheader)}</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0e0e0e;padding:32px 12px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#131313;border:1px solid rgba(0,218,243,0.18);">
-          <tr>
-            <td style="padding:20px 24px;border-bottom:1px solid rgba(0,218,243,0.12);">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#e4e2e1;">
-                    HAYTHI<span style="color:#00daf3;">.MG</span>
-                  </td>
-                  <td align="right" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#00daf3;">
-                    ${escapeHtml(t.badge)}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:28px 24px 8px 24px;">
-              <div style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#00daf3;margin-bottom:12px;">
-                &gt; init ack --secure
-              </div>
-              <h1 style="margin:0 0 18px 0;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:700;letter-spacing:-0.04em;text-transform:uppercase;color:#e4e2e1;">
-                CONTACT_<br /><span style="color:#00daf3;">ROOT</span>
-              </h1>
+  const bodyHtml = `
               <p style="margin:0 0 14px 0;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#e4e2e1;">
                 ${t.hello(safeName)}
               </p>
@@ -142,31 +200,79 @@ export function buildAckEmail({ lang = 'FR', name, subjectKey }) {
               <p style="margin:0 0 26px 0;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#00daf3;">${escapeHtml(t.team)}</p>
               <a href="https://haythi.mg" style="display:inline-block;background:#00daf3;color:#003640;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;padding:14px 22px;">
                 ${escapeHtml(t.cta)}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:28px 24px 24px 24px;border-top:1px solid rgba(0,218,243,0.12);">
-              <p style="margin:0 0 8px 0;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(228,226,225,0.45);">
-                ${escapeHtml(t.footer)}
-              </p>
-              <p style="margin:0;font-family:Inter,Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#cac5c4;">
-                <a href="mailto:contact@haythi.mg" style="color:#00daf3;text-decoration:none;">contact@haythi.mg</a>
-                &nbsp;·&nbsp;
-                <a href="https://haythi.mg" style="color:#00daf3;text-decoration:none;">haythi.mg</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
+              </a>`;
 
   return {
     subject: t.subject,
     text,
-    html,
+    html: haythiMailShell({
+      lang: locale,
+      title: t.subject,
+      badge: t.badge,
+      prompt: t.prompt,
+      preheader: t.preheader,
+      bodyHtml,
+    }),
+  };
+}
+
+/**
+ * Réponse opérateur (BO) dans le même template HAYTHI.
+ * @param {{ lang?: string, name?: string, subject: string, text: string, subjectKey?: string }} opts
+ */
+export function buildReplyEmail({ lang = 'FR', name = '', subject, text, subjectKey = '' }) {
+  const locale = lang === 'EN' ? 'EN' : 'FR';
+  const t = REPLY_COPY[locale];
+  const protocol =
+    PROTOCOLS[locale][subjectKey] || PROTOCOLS.FR[subjectKey] || subjectKey || '';
+  const safeName = escapeHtml(name);
+  const bodyEscaped = escapeHtml(String(text).replace(/\r\n?/g, '\n')).replace(/\n/g, '<br>\n');
+
+  const plain = [
+    t.hello(name),
+    '',
+    text,
+    '',
+    t.team,
+    '',
+    'https://haythi.mg',
+    'contact@haythi.mg',
+  ].join('\n');
+
+  const protocolBlock = protocol
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#1b1c1c;border:1px solid rgba(172,137,131,0.25);margin:0 0 22px 0;">
+                <tr>
+                  <td style="padding:14px 16px;">
+                    <div style="font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(228,226,225,0.45);margin-bottom:6px;">PROTOCOL_TYPE</div>
+                    <div style="font-family:Inter,Arial,Helvetica,sans-serif;font-size:14px;color:#00daf3;">${escapeHtml(protocol)}</div>
+                  </td>
+                </tr>
+              </table>`
+    : '';
+
+  const bodyHtml = `
+              <p style="margin:0 0 14px 0;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#e4e2e1;">
+                ${t.hello(safeName)}
+              </p>
+              ${protocolBlock}
+              <div style="margin:0 0 22px 0;font-family:Inter,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#cac5c4;">
+                ${bodyEscaped}
+              </div>
+              <p style="margin:0 0 26px 0;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#00daf3;">${escapeHtml(t.team)}</p>
+              <a href="https://haythi.mg" style="display:inline-block;background:#00daf3;color:#003640;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;padding:14px 22px;">
+                ${escapeHtml(t.cta)}
+              </a>`;
+
+  return {
+    subject,
+    text: plain,
+    html: haythiMailShell({
+      lang: locale,
+      title: subject,
+      badge: t.badge,
+      prompt: t.prompt,
+      preheader: t.preheader,
+      bodyHtml,
+    }),
   };
 }

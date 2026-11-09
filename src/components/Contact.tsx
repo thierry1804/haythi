@@ -1,10 +1,21 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
 
+type TransmitStatus = 'idle' | 'sending' | 'success' | 'error';
+
 export default function Contact() {
   const { t, lang } = useI18n();
   const startedAtRef = useRef(Date.now());
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<TransmitStatus>('idle');
+  const [errorKey, setErrorKey] = useState<
+    | 'transmitErr'
+    | 'transmitErrFields'
+    | 'transmitErrSubject'
+    | 'transmitErrMessage'
+    | 'transmitErrNetwork'
+    | 'transmitErrRate'
+    | 'transmitErrUpstream'
+  >('transmitErr');
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -14,13 +25,35 @@ export default function Contact() {
     website: '',
   });
 
+  const fail = (
+    key:
+      | 'transmitErr'
+      | 'transmitErrFields'
+      | 'transmitErrSubject'
+      | 'transmitErrMessage'
+      | 'transmitErrNetwork'
+      | 'transmitErrRate'
+      | 'transmitErrUpstream',
+  ) => {
+    setErrorKey(key);
+    setStatus('error');
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('sending');
 
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
-    if (!formData.name.trim() || !emailOk || !formData.subject || !formData.message.trim()) {
-      setStatus('error');
+    if (!formData.subject) {
+      fail('transmitErrSubject');
+      return;
+    }
+    if (formData.message.trim().length < 10) {
+      fail('transmitErrMessage');
+      return;
+    }
+    if (!formData.name.trim() || !emailOk) {
+      fail('transmitErrFields');
       return;
     }
 
@@ -41,9 +74,29 @@ export default function Contact() {
         }),
       });
 
-      const payload = (await res.json().catch(() => null)) as { ok?: boolean } | null;
+      const payload = (await res.json().catch(() => null)) as
+        | { ok?: boolean; error?: string }
+        | null;
       if (!res.ok || !payload?.ok) {
-        setStatus('error');
+        const code = payload?.error || '';
+        if (res.status === 429 || code === 'RATE_LIMIT' || code.endsWith('_LIMIT')) {
+          fail('transmitErrRate');
+          return;
+        }
+        if (
+          res.status === 502 ||
+          code === 'UPSTREAM_THROW' ||
+          code === 'UPSTREAM_REJECTED' ||
+          code === 'SERVER_CONFIG'
+        ) {
+          fail('transmitErrUpstream');
+          return;
+        }
+        if (code === 'INVALID_PAYLOAD') {
+          fail('transmitErrFields');
+          return;
+        }
+        fail('transmitErr');
         return;
       }
 
@@ -51,7 +104,7 @@ export default function Contact() {
       startedAtRef.current = Date.now();
       setFormData({ name: '', company: '', email: '', subject: '', message: '', website: '' });
     } catch {
-      setStatus('error');
+      fail('transmitErrNetwork');
     }
   };
 
@@ -305,7 +358,7 @@ export default function Contact() {
                   role="alert"
                   className="p-4 bg-primary-container/20 border border-primary/30 text-primary text-xs font-label uppercase tracking-widest"
                 >
-                  {t('transmitErr')}
+                  {t(errorKey)}
                 </div>
               )}
 

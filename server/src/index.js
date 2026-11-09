@@ -29,8 +29,8 @@ const MAX_BODY_BYTES = 16 * 1024;
 const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 80);
 const MONTHLY_SEND_LIMIT = Number(process.env.MONTHLY_SEND_LIMIT || 2500);
 const EMAIL_COOLDOWN_MS = Number(process.env.EMAIL_COOLDOWN_MS || 60 * 60 * 1000);
-const IP_HOUR_MAX = Number(process.env.IP_HOUR_MAX || 10);
-const IP_DAY_MAX = Number(process.env.IP_DAY_MAX || 20);
+const IP_HOUR_MAX = Number(process.env.IP_HOUR_MAX || 30);
+const IP_DAY_MAX = Number(process.env.IP_DAY_MAX || 80);
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://haythi.mg,https://www.haythi.mg')
   .split(',')
@@ -264,6 +264,12 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     }
 
     const email = escapeHeaderSafe(data.email.toLowerCase());
+    const name = escapeHeaderSafe(data.name);
+    const company = escapeHeaderSafe(data.company || '');
+    const message = stripControl(data.message);
+    const protocolLabel = PROTOCOLS[data.subject];
+    const refId = `haythi-contact-${Date.now()}`;
+
     // 2 envois Resend : notif interne + accusé utilisateur
     const SEND_UNITS = 2;
     const gate = quota.canSend({
@@ -274,29 +280,15 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
       ipHourMax: IP_HOUR_MAX,
       ipDayMax: IP_DAY_MAX,
     });
-    if (!gate.ok) {
+
+    // Double-submit même email : faux succès, pas de 2e lead.
+    if (!gate.ok && gate.error === 'EMAIL_COOLDOWN') {
       console.warn('[haythi-api] quota block', gate.error, 'ip=' + ip);
-      // Soft-OK : déjà envoyé / anti double-clic — pas d'erreur UX
-      if (
-        gate.error === 'EMAIL_COOLDOWN' ||
-        gate.error === 'IP_HOUR_LIMIT' ||
-        gate.error === 'IP_DAY_LIMIT'
-      ) {
-        return res.status(200).json({ ok: true, deduped: true });
-      }
-      return jsonError(res, 429, gate.error);
+      return res.status(200).json({ ok: true, deduped: true });
     }
 
-    if (!resend) {
-      return jsonError(res, 500, 'SERVER_CONFIG');
-    }
-
-    const name = escapeHeaderSafe(data.name);
-    const company = escapeHeaderSafe(data.company || '');
-    const message = stripControl(data.message);
-    const protocolLabel = PROTOCOLS[data.subject];
-    const refId = `haythi-contact-${Date.now()}`;
-
+    // Toujours persister un lead légitime. Si le quota IP/jour bloque l'envoi,
+    // le BO reçoit quand même la demande (email_status=failed).
     let leadId = null;
     try {
       ({ id: leadId } = createLead(db, {
@@ -309,6 +301,37 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
       }));
     } catch (dbErr) {
       console.error('[haythi-api] lead insert fail', dbErr?.message || dbErr);
+    }
+
+    if (!gate.ok) {
+      console.warn('[haythi-api] quota block', gate.error, 'ip=' + ip, 'lead=' + (leadId || '-'));
+      if (leadId) {
+        try {
+          setLeadEmailStatus(db, leadId, 'failed');
+        } catch (dbErr) {
+          console.error('[haythi-api] lead status fail', dbErr?.message || dbErr);
+        }
+      }
+      if (
+        gate.error === 'IP_HOUR_LIMIT' ||
+        gate.error === 'IP_DAY_LIMIT' ||
+        gate.error === 'DAILY_QUOTA' ||
+        gate.error === 'MONTHLY_QUOTA'
+      ) {
+        return res.status(200).json({ ok: true, throttled: true });
+      }
+      return jsonError(res, 429, gate.error);
+    }
+
+    if (!resend) {
+      if (leadId) {
+        try {
+          setLeadEmailStatus(db, leadId, 'failed');
+        } catch (dbErr) {
+          console.error('[haythi-api] lead status fail', dbErr?.message || dbErr);
+        }
+      }
+      return jsonError(res, 500, 'SERVER_CONFIG');
     }
 
     const markLead = (status) => {

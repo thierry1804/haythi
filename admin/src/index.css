@@ -172,6 +172,25 @@ button:disabled {
   cursor: not-allowed;
 }
 
+a.btn {
+  display: inline-block;
+  padding: 8px 14px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.2;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+a.btn:hover {
+  background: var(--accent-hover);
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+
 .btn.block {
   width: 100%;
   margin-top: 8px;
@@ -185,6 +204,7 @@ button:disabled {
 
 .btn.secondary:hover {
   background: var(--surface-2);
+  color: var(--text);
 }
 
 .btn.danger {
@@ -410,6 +430,19 @@ tbody tr:last-child td {
   background: var(--surface-2);
 }
 
+.lead-row {
+  cursor: pointer;
+}
+
+.lead-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.lead-name {
+  font-weight: 500;
+}
+
 table a {
   color: var(--text);
   font-weight: 500;
@@ -418,6 +451,13 @@ table a {
 table a:hover {
   color: var(--accent);
   text-decoration: none;
+}
+
+.btn-compact {
+  display: inline-block;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.2;
 }
 
 .num,
