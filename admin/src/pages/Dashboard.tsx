@@ -40,31 +40,39 @@ export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => vo
   }, [onUnauthorized]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!stats7 || !stats30 || newLeads === null) return <p className="muted">Chargement…</p>;
+  if (!stats7 || !stats30 || newLeads === null) {
+    return (
+      <div className="page">
+        <h1>Tableau de bord</h1>
+        <p className="muted">Chargement…</p>
+      </div>
+    );
+  }
+
+  const peak = stats7.days.reduce((n, d) => Math.max(n, d.hits), 0);
 
   return (
-    <>
+    <div className="page">
       <h1>Tableau de bord</h1>
 
-      <div className="stats">
-        <div className="stat">
-          <div className="stat-value">{newLeads}</div>
-          <div className="muted">Leads nouveaux</div>
-          <a href="#/leads">Voir les leads</a>
+      <section className="meter" aria-label="Résumé">
+        <a className="meter-item" href="#/leads">
+          <span className="meter-value">{newLeads}</span>
+          <span className="meter-label">Leads nouveaux</span>
+        </a>
+        <div className="meter-item">
+          <span className="meter-value">{total(stats7)}</span>
+          <span className="meter-label">Visites, 7 jours</span>
         </div>
-        <div className="stat">
-          <div className="stat-value">{total(stats7)}</div>
-          <div className="muted">Visites sur 7 jours</div>
+        <div className="meter-item">
+          <span className="meter-value">{total(stats30)}</span>
+          <span className="meter-label">Visites, 30 jours</span>
         </div>
-        <div className="stat">
-          <div className="stat-value">{total(stats30)}</div>
-          <div className="muted">Visites sur 30 jours</div>
-        </div>
-      </div>
+      </section>
 
-      <div className="columns">
-        <section>
-          <h2>Visites par jour (7 jours)</h2>
+      <div className="split">
+        <section className="panel">
+          <h2>Visites par jour</h2>
           <table>
             <thead>
               <tr>
@@ -76,16 +84,26 @@ export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => vo
               {stats7.days.map((d) => (
                 <tr key={d.day}>
                   <td>{formatDay(d.day)}</td>
-                  <td className="num">{d.hits}</td>
+                  <td>
+                    <div className="hit">
+                      <span className="hit-track" aria-hidden="true">
+                        <span
+                          className="hit-bar"
+                          style={{ width: peak ? `${(d.hits / peak) * 100}%` : '0%' }}
+                        />
+                      </span>
+                      <span className="hit-count">{d.hits}</span>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </section>
-        <section>
-          <h2>Principales sources (30 jours)</h2>
+        <section className="panel">
+          <h2>Sources</h2>
           {stats30.topReferrers.length === 0 ? (
-            <p className="muted">Aucune source externe</p>
+            <p className="empty">Aucune source externe</p>
           ) : (
             <table>
               <thead>
@@ -106,6 +124,6 @@ export default function Dashboard({ onUnauthorized }: { onUnauthorized: () => vo
           )}
         </section>
       </div>
-    </>
+    </div>
   );
 }

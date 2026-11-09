@@ -145,10 +145,10 @@ export default function LeadDetail({
   const anonymized = !lead.email;
 
   return (
-    <>
-      <p>
-        <a href="#/leads">← Leads</a>
-      </p>
+    <div className="page">
+      <nav className="crumb" aria-label="Fil d'Ariane">
+        <a href="#/leads">Leads</a>
+      </nav>
       <div className="page-head">
         <h1>{anonymized ? 'Lead anonymisé' : lead.name}</h1>
         <label className="inline-field">
@@ -169,7 +169,7 @@ export default function LeadDetail({
 
       {lead.status === 'closed' && (
         <div className="banner" role="status">
-          <span>Supprimer ce lead — rétention terminée</span>
+          <span>Rétention terminée. Ce lead peut être supprimé.</span>
           <button type="button" className="btn danger" onClick={() => void remove()} disabled={busy}>
             Supprimer
           </button>
@@ -183,93 +183,104 @@ export default function LeadDetail({
       )}
       {notice && <p className="ok">{notice}</p>}
 
-      <dl className="details">
-        <dt>Date</dt>
-        <dd>{formatDate(lead.created_at)}</dd>
-        <dt>E-mail</dt>
-        <dd>{lead.email || '—'}</dd>
-        <dt>Société</dt>
-        <dd>{lead.company || '—'}</dd>
-        <dt>Langue</dt>
-        <dd>{lead.lang}</dd>
-        <dt>Sujet</dt>
-        <dd>{protocolLabel(lead.subject)}</dd>
-        <dt>Message</dt>
-        <dd className="message">{lead.message || '—'}</dd>
-      </dl>
+      <div className="lead-grid">
+        <section className="panel">
+          <h2>Demande</h2>
+          <dl className="details">
+            <dt>Date</dt>
+            <dd>{formatDate(lead.created_at)}</dd>
+            <dt>E-mail</dt>
+            <dd>{lead.email || '—'}</dd>
+            <dt>Société</dt>
+            <dd>{lead.company || '—'}</dd>
+            <dt>Langue</dt>
+            <dd>{lead.lang}</dd>
+            <dt>Sujet</dt>
+            <dd>{protocolLabel(lead.subject)}</dd>
+            <dt>Message</dt>
+            <dd className="message">{lead.message || '—'}</dd>
+          </dl>
+        </section>
 
-      <h2>Répondre</h2>
-      {anonymized ? (
-        <p className="muted">Réponse impossible : lead anonymisé.</p>
-      ) : (
-        <form className="reply" onSubmit={(e) => void sendReply(e)}>
-          <label className="field">
-            <span>Objet</span>
-            <input
-              type="text"
-              value={subject}
-              maxLength={300}
-              onChange={(e) => setSubject(e.target.value)}
-              required
-            />
-          </label>
-          <label className="field">
-            <span>Message</span>
-            <textarea
-              rows={8}
-              value={text}
-              maxLength={10000}
-              onChange={(e) => setText(e.target.value)}
-              required
-            />
-          </label>
-          <button type="submit" className="btn" disabled={busy || !subject.trim() || !text.trim()}>
-            Envoyer
-          </button>
-        </form>
-      )}
-
-      <h2>Données personnelles</h2>
-      <div className="actions">
-        <button type="button" className="btn secondary" onClick={() => void exportLead()} disabled={busy}>
-          Exporter
-        </button>
-        <button
-          type="button"
-          className="btn secondary"
-          onClick={() => void anonymize()}
-          disabled={busy || anonymized}
-        >
-          Anonymiser
-        </button>
-        <button type="button" className="btn danger" onClick={() => void remove()} disabled={busy}>
-          Supprimer
-        </button>
+        <section className="panel">
+          <h2>Répondre</h2>
+          {anonymized ? (
+            <p className="empty">Réponse impossible : lead anonymisé.</p>
+          ) : (
+            <form className="reply" onSubmit={(e) => void sendReply(e)}>
+              <label className="field">
+                <span>Objet</span>
+                <input
+                  type="text"
+                  value={subject}
+                  maxLength={300}
+                  onChange={(e) => setSubject(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="field">
+                <span>Message</span>
+                <textarea
+                  rows={8}
+                  value={text}
+                  maxLength={10000}
+                  onChange={(e) => setText(e.target.value)}
+                  required
+                />
+              </label>
+              <button type="submit" className="btn" disabled={busy || !subject.trim() || !text.trim()}>
+                Envoyer
+              </button>
+            </form>
+          )}
+        </section>
       </div>
 
-      <h2>Historique</h2>
-      {events.length === 0 ? (
-        <p className="muted">Aucun événement</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Événement</th>
-              <th>Détail</th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map((e) => (
-              <tr key={e.id}>
-                <td className="nowrap">{formatDate(e.created_at)}</td>
-                <td>{EVENT_LABELS[e.type] ?? e.type}</td>
-                <td>{eventDetail(e)}</td>
+      <section className="panel panel-space">
+        <h2>Données personnelles</h2>
+        <div className="actions">
+          <button type="button" className="btn secondary" onClick={() => void exportLead()} disabled={busy}>
+            Exporter
+          </button>
+          <button
+            type="button"
+            className="btn secondary"
+            onClick={() => void anonymize()}
+            disabled={busy || anonymized}
+          >
+            Anonymiser
+          </button>
+          <button type="button" className="btn danger" onClick={() => void remove()} disabled={busy}>
+            Supprimer
+          </button>
+        </div>
+      </section>
+
+      <section className="panel panel-space">
+        <h2>Historique</h2>
+        {events.length === 0 ? (
+          <p className="empty">Aucun événement</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Événement</th>
+                <th>Détail</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </>
+            </thead>
+            <tbody>
+              {events.map((e) => (
+                <tr key={e.id}>
+                  <td className="nowrap">{formatDate(e.created_at)}</td>
+                  <td>{EVENT_LABELS[e.type] ?? e.type}</td>
+                  <td>{eventDetail(e)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+    </div>
   );
 }

@@ -25,7 +25,7 @@ export default function Leads({ onUnauthorized }: { onUnauthorized: () => void }
   }, [status, onUnauthorized]);
 
   return (
-    <>
+    <div className="page">
       <div className="page-head">
         <h1>Leads</h1>
         <label className="inline-field">
@@ -43,34 +43,36 @@ export default function Leads({ onUnauthorized }: { onUnauthorized: () => void }
 
       {error && <p className="error">{error}</p>}
       {!error && leads === null && <p className="muted">Chargement…</p>}
-      {leads && leads.length === 0 && <p className="muted">Aucun lead</p>}
+      {leads && leads.length === 0 && <p className="empty">Aucun lead</p>}
       {leads && leads.length > 0 && (
-        <table className="clickable">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Nom</th>
-              <th>Sujet</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leads.map((l) => (
-              <tr key={l.id}>
-                <td className="nowrap">{formatDate(l.created_at)}</td>
-                <td>
-                  <a href={`#/leads/${encodeURIComponent(l.id)}`}>
-                    {l.name || <em className="muted">Anonymisé</em>}
-                  </a>
-                  {l.company && <div className="muted">{l.company}</div>}
-                </td>
-                <td>{protocolLabel(l.subject)}</td>
-                <td className="nowrap">{statusLabel(l.status)}</td>
+        <div className="table-wrap">
+          <table className="clickable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Nom</th>
+                <th>Sujet</th>
+                <th>Statut</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {leads.map((l) => (
+                <tr key={l.id}>
+                  <td className="nowrap">{formatDate(l.created_at)}</td>
+                  <td>
+                    <a href={`#/leads/${encodeURIComponent(l.id)}`}>
+                      {l.name || <em className="muted">Anonymisé</em>}
+                    </a>
+                    {l.company && <div className="muted">{l.company}</div>}
+                  </td>
+                  <td>{protocolLabel(l.subject)}</td>
+                  <td className={`nowrap status-${l.status}`}>{statusLabel(l.status)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
-    </>
+    </div>
   );
 }

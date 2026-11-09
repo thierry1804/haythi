@@ -37,7 +37,7 @@ export default function Login({ onLoggedIn }: { onLoggedIn: () => void }) {
   return (
     <main className="login">
       <form className="login-form" onSubmit={onSubmit}>
-        <h1>HAYTHI Admin</h1>
+        <h1 className="login-brand">HAYTHI</h1>
         {error && (
           <p className="error" role="alert">
             {error}

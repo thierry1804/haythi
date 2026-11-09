@@ -18,16 +18,18 @@ export default function Account({ email, onLoggedOut }: { email: string; onLogge
   }
 
   return (
-    <>
+    <div className="page">
       <h1>Compte</h1>
-      <dl className="details">
-        <dt>E-mail</dt>
-        <dd>{email}</dd>
-      </dl>
-      {error && <p className="error">{error}</p>}
-      <button type="button" className="btn" onClick={logout} disabled={busy}>
-        Se déconnecter
-      </button>
-    </>
+      <section className="panel account-panel">
+        <dl className="details">
+          <dt>E-mail</dt>
+          <dd>{email}</dd>
+        </dl>
+        {error && <p className="error">{error}</p>}
+        <button type="button" className="btn secondary" onClick={logout} disabled={busy}>
+          Se déconnecter
+        </button>
+      </section>
+    </div>
   );
 }

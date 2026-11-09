@@ -31,7 +31,13 @@ export default function App() {
     void refresh();
   }, [refresh]);
 
-  if (session.state === 'loading') return <p className="muted pad">Chargement…</p>;
+  if (session.state === 'loading') {
+    return (
+      <div className="boot" role="status">
+        Chargement
+      </div>
+    );
+  }
   if (session.state === 'out') return <Login onLoggedIn={() => void refresh()} />;
 
   const active = route.name === 'lead' ? 'leads' : route.name;
@@ -39,16 +45,26 @@ export default function App() {
   return (
     <div className="shell">
       <nav className="sidebar" aria-label="Navigation">
-        <div className="brand">HAYTHI Admin</div>
-        <a href="#/" className={active === 'dashboard' ? 'active' : ''}>
-          Tableau de bord
-        </a>
-        <a href="#/leads" className={active === 'leads' ? 'active' : ''}>
-          Leads
-        </a>
-        <a href="#/account" className={active === 'account' ? 'active' : ''}>
-          Compte
-        </a>
+        <div className="brand">
+          <a className="brand-link" href="#/">
+            HAYTHI
+          </a>
+          <span className="brand-role">Admin</span>
+        </div>
+        <div className="nav-links">
+          <a href="#/" className={active === 'dashboard' ? 'active' : ''}>
+            Tableau de bord
+          </a>
+          <a href="#/leads" className={active === 'leads' ? 'active' : ''}>
+            Leads
+          </a>
+          <a href="#/account" className={active === 'account' ? 'active' : ''}>
+            Compte
+          </a>
+        </div>
+        <div className="sidebar-foot" title={session.email}>
+          {session.email}
+        </div>
       </nav>
       <main className="content">
         {route.name === 'dashboard' && <Dashboard onUnauthorized={signOut} />}
