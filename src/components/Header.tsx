@@ -47,11 +47,16 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-tertiary/10 ambient-shadow">
       <div className="flex justify-between items-center px-6 md:px-12 h-20">
-        <a href="#home" className="flex items-center gap-3 group" onClick={() => setMobileOpen(false)}>
+        <a
+          href="#home"
+          aria-label="HAYTHI"
+          className="flex items-center gap-3 group"
+          onClick={() => setMobileOpen(false)}
+        >
           <img
-            src="/mark-light.webp"
-            alt="HAYTHI.MG"
-            className="h-9 w-auto md:h-10 object-contain drop-shadow-[0_0_12px_rgba(255,180,167,0.35)] group-hover:opacity-90 transition-opacity"
+            src="/mark-light.webp?v=2"
+            alt=""
+            className="h-9 w-9 md:h-10 md:w-10 object-contain drop-shadow-[0_0_10px_rgba(0,218,243,0.35)] group-hover:opacity-90 transition-opacity"
           />
           <span className="hidden sm:block font-headline text-sm md:text-base font-bold tracking-[0.22em] text-on-surface uppercase">
             HAYTHI

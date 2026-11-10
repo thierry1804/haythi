@@ -10,13 +10,19 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div className="flex items-center gap-4">
             <img
-              src="/mark-light.webp"
-              alt="HAYTHI.MG"
-              className="h-10 w-auto object-contain"
+              src="/mark-light.webp?v=2"
+              alt=""
+              className="h-10 w-10 object-contain"
             />
-            <span className="font-label text-[10px] tracking-widest text-white/30 uppercase">
-              © {year} HAYTHI.MG
-            </span>
+            <div className="flex flex-col gap-1">
+              <span className="font-headline text-sm font-bold tracking-[0.22em] text-on-surface">HAYTHI</span>
+              <span className="font-label text-[9px] tracking-[0.22em] text-white/35 uppercase">
+                Decode. Connect. Build.
+              </span>
+              <span className="font-label text-[10px] tracking-widest text-white/30 uppercase">
+                © {year} HAYTHI.MG
+              </span>
+            </div>
           </div>
 
           <nav className="flex flex-wrap gap-6" aria-label="Footer">

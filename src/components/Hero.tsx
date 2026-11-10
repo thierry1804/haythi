@@ -16,6 +16,14 @@ export default function Hero() {
 
       <HeroNetworkCanvas />
 
+      <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden" aria-hidden="true">
+        <img
+          src="/hero-knot.webp"
+          alt=""
+          className="hero-knot absolute inset-y-0 right-0 h-full w-auto max-w-none select-none"
+        />
+      </div>
+
       <div className="relative z-10 px-8 md:px-12 lg:px-24 py-24">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
           <div className="max-w-2xl">
@@ -52,7 +60,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="hidden md:block font-mono text-[10px] text-white/30 space-y-1 text-right animate-hero-in [animation-delay:480ms]">
+          <div className="hidden md:block font-mono text-[10px] text-white/75 space-y-1 text-right animate-hero-in [animation-delay:480ms] [text-shadow:0_1px_2px_rgba(0,0,0,0.9)]">
             <div>LATENCY: 14MS</div>
             <div>THROUGHPUT: 1.2GB/S</div>
             <div>ENCRYPTION: AES-256-GCM</div>

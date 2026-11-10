@@ -32,6 +32,12 @@ const phases = [
 export default function Process() {
   return (
     <section id="process" className="relative flex w-full flex-col py-24 overflow-hidden">
+      <img
+        src="/hero-knot.webp"
+        alt=""
+        className="section-knot pointer-events-none absolute -right-[18%] top-1/2 w-[min(560px,78vw)] -translate-y-1/2 opacity-[0.2] select-none"
+        aria-hidden="true"
+      />
       <div className="px-8 md:px-12 lg:px-24 relative z-10">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-headline text-3xl font-bold tracking-tighter mb-16 uppercase text-on-surface">

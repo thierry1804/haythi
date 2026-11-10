@@ -112,8 +112,14 @@ export default function Contact() {
     'w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-body focus:outline-none focus:border-tertiary focus:bg-tertiary/[0.02] transition-all py-2 placeholder:opacity-20 uppercase text-xs focus-visible:ring-0';
 
   return (
-    <section id="contact" className="relative flex w-full flex-col py-24 border-t-2 border-primary/20">
-      <div className="px-8 md:px-12 lg:px-24">
+    <section id="contact" className="relative flex w-full flex-col py-24 border-t-2 border-primary/20 overflow-hidden">
+      <img
+        src="/hero-knot.webp"
+        alt=""
+        className="section-knot pointer-events-none absolute -left-[22%] bottom-[-18%] w-[min(480px,90vw)] opacity-[0.16] select-none"
+        aria-hidden="true"
+      />
+      <div className="px-8 md:px-12 lg:px-24 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-20">
             <div className="flex flex-col gap-8">

@@ -37,6 +37,7 @@ export default function Login({ onLoggedIn }: { onLoggedIn: () => void }) {
   return (
     <main className="login">
       <form className="login-form" onSubmit={onSubmit}>
+        <img src="/mark-light.webp?v=2" alt="" className="login-mark" />
         <h1 className="login-brand">HAYTHI</h1>
         {error && (
           <p className="error" role="alert">
